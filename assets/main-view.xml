@@ -1,0 +1,4 @@
+<vbox style="padding: 5px;">
+    <label text="Gorilla Mod Manager"/>
+    <modlist id="modlist"></modlist>    
+</vbox>

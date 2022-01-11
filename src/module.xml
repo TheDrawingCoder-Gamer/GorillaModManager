@@ -1,0 +1,7 @@
+<module>
+    <components>
+        <class name="ModItem"/>
+        <class name="ModGroup"/>
+        <class name="ModList"/>
+    </components>
+</module>

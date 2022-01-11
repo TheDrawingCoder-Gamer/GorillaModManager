@@ -1,0 +1,7 @@
+<hbox>
+
+    <checkbox id="enabled"/>
+    <label id="name" />
+    <label id="version" />
+    <label id="author"/>
+</hbox>

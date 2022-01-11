@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json
+local:assets/bepinex-linux.json
