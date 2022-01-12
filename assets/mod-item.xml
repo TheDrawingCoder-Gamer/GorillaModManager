@@ -1,4 +1,4 @@
-<hbox>
+<hbox width="100%">
 
     <checkbox id="enabled"/>
     <label id="name" />

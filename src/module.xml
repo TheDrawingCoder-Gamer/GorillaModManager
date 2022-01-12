@@ -1,7 +1,7 @@
 <module>
     <components>
-        <class name="ModItem"/>
-        <class name="ModGroup"/>
-        <class name="ModList"/>
+        <class name="components.ModGroup"/>
+        <class name="components.ModItem"/>
+        <class name="components.ModList"/>
     </components>
 </module>

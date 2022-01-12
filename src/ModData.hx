@@ -7,6 +7,7 @@ typedef ModData = {
     var version:String;
     var downloadURL:String;
     var group:String;
+    var ?dependencies:Array<String>;
 }
 
 class ModDataTools {

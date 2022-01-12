@@ -1,4 +1,4 @@
-package;
+package components;
 import ModData;
 @:build(haxe.ui.ComponentBuilder.build("assets/mod-group.xml"))
 @:keep
@@ -6,7 +6,7 @@ class ModGroup extends haxe.ui.containers.VBox {
     public function new(name:String) {
         super();
         this.title.text = name;
-        this.id = name;
+        this.id = ModDataTools.mangleName(name);
     }
     public function addMod(mod:ModData) {
         this.mods.addComponent(new ModItem(mod));
