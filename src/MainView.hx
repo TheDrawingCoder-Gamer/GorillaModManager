@@ -33,9 +33,9 @@ class MainView extends VBox {
                 });
 			}
 		}
-        trace(mods);
         for (mod in mods) {
             this.modlist.addMod(mod);
         }
+        trace(this.modlist.groups.childComponents);
 	}
 }

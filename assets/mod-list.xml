@@ -1,0 +1,3 @@
+<scrollview width="100%" height="100%" style="background-color: black;">
+    <vbox id="groups" width="100%"> </vbox>
+</scrollview>

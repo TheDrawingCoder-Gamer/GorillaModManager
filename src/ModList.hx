@@ -1,23 +1,23 @@
 package;
 
 import haxe.ui.containers.ScrollView;
-
+import ModData;
+using StringTools;
 @:keep
+@:build(haxe.ui.ComponentBuilder.build("assets/mod-list.xml"))
 class ModList extends haxe.ui.containers.ScrollView {
     
     public function new() {
         super();
-        this.percentWidth = 100;
     }
     public function addMod(mod:ModData) {
-        trace(mod);
-        var group:Null<ModGroup> = this.findComponent(mod.group, ModGroup);
-        trace(group);
+        var unborkedName = ModDataTools.mangleName(mod.group);
+        var group:Null<ModGroup> = this.groups.findComponent(unborkedName, ModGroup, false);
         if (group == null) {
-            group = new ModGroup(mod.group);
-            this.addComponent(group);
+            group = new ModGroup(unborkedName);
+            this.groups.addComponent(group);
+            trace(this.groups.childComponents);
         }
-        trace(group);
         group.addMod(mod);
     }
 }
