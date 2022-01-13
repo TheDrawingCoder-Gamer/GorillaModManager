@@ -46,7 +46,7 @@ class ModList extends haxe.ui.containers.ScrollView {
     public function updateMods() {
         var modItems = this.modItems();
         for (modItem in modItems) {
-            modItem.enabled.allowInteraction = true;
+            modItem.enabled.disabled = false;
         }
         __updateMods(modItems);
     }
@@ -58,13 +58,13 @@ class ModList extends haxe.ui.containers.ScrollView {
                         var dependency = modItems.find((item) -> item.mod.name == depend);
                         if (!dependency.enabled.selected) {
                             dependency.enabled.selected = true;
-                            dependency.enabled.allowInteraction = false;
+                            dependency.enabled.disabled = true;
                             __updateMods(modItems);
                             // Stop this cycle and redo everything
                             break;
                         }
-                        if (dependency.enabled.allowInteraction) {
-                            dependency.enabled.allowInteraction = false;
+                        if (!dependency.enabled.disabled) {
+                            dependency.enabled.disabled = true;
                         }
                         
                     }

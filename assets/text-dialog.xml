@@ -1,0 +1,5 @@
+<hbox width="100%">
+    <label text="Gorilla Path"/>
+    <textfield id="monkePath" width="100%" disabled="true"/>
+    <button id="openFileDialog" text="..."/>
+</hbox>

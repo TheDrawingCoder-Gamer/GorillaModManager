@@ -22,7 +22,7 @@ class MainView extends VBox {
 	public function new() {
 		super();
 		instance = this;
-		this.monkePath.text = gorillaPath;
+		this.monkePathDialog.monkePath.text = gorillaPath;
 		var mods:Array<ModData> = [];
 		for (source in File.getContent('$assetsPath/assets/sources.txt').split('\n')) {
 			if (source.startsWith("local:")) {
@@ -48,8 +48,6 @@ class MainView extends VBox {
         for (mod in mods) {
             this.modlist.addMod(mod);
         }
-        trace(this.modlist.groups.childComponents);
-		trace(this.modlist.groups.childComponents[0].childComponents[1].childComponents);
 	}
 	@:bind(installMods, MouseEvent.CLICK)
 	public function doInstallMods(e:MouseEvent) {
@@ -191,8 +189,8 @@ class MainView extends VBox {
 		}
 		
 	}
-	@:bind(monkePath, UIEvent.CHANGE)
+	@:bind(monkePathDialog.monkePath, UIEvent.CHANGE)
 	private function updatePath(_:UIEvent) {
-		gorillaPath = this.monkePath.text;
+		gorillaPath = this.monkePathDialog.monkePath.text;
 	}
 }

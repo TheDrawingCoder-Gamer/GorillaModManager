@@ -3,5 +3,6 @@
         <class name="components.ModGroup"/>
         <class name="components.ModItem"/>
         <class name="components.ModList"/>
+        <class name="components.DialogTextField"/>
     </components>
 </module>
