@@ -37,6 +37,7 @@ jobs:
           haxelib install haxeui-core
           haxelib install haxeui-hxwidgets
           haxelib install hxWidgets
+          haxelib install tink_http
       - name: Install WxWidgets
         run: |
           sudo apt-get install libgtk-3-dev
@@ -73,6 +74,7 @@ jobs:
            haxelib install haxeui-core
            haxelib install haxeui-hxwidgets
            haxelib install hxWidgets
+           haxelib install tink_http
       - name: Install wxWidgets
         shell: powershell
         run: |
