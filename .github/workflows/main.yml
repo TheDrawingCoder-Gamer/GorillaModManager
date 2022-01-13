@@ -63,7 +63,7 @@ jobs:
       - name: Build
         run: |
           haxe hxwidgets.hxml
-          cp -r assets build/wxwidgets/assets
+          cp -R assets build/wxwidgets/
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with: 
@@ -100,9 +100,10 @@ jobs:
           nmake.exe -f makefile.vc BUILD=release SHARED=1 TARGET_CPU=X64
           cd ..\..\..
       - name: Build
+        shell: powershell
         run: |
           haxe hxwidgets.hxml
-          cp -r assets build/wxwidgets/assets
+          Copy-Item -Path "assets" -Destination "build/hxwidgets" -Recurse
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with: 
