@@ -73,7 +73,7 @@ jobs:
       runs-on: windows-latest
       steps: 
       - uses: actions/checkout@v2
-
+      - uses: egor-tensin/vs-shell@v2
       - uses: krdlab/setup-haxe@master
         with: 
          haxe-version: 4.2.4
