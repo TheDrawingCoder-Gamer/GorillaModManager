@@ -39,6 +39,7 @@ jobs:
           haxelib install hxWidgets
       - name: Install WxWidgets
         run: |
+          apt-get install libgtk-3-dev
           git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
           cd wxWidgets
           mkdir wx_build
@@ -72,16 +73,10 @@ jobs:
            haxelib install haxeui-core
            haxelib install haxeui-hxwidgets
            haxelib install hxWidgets
-      - name: Install WxWidgets
+      - name: Install wxWidgets
+        shell: powershell
         run: |
-          git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
-          cd wxWidgets
-          mkdir wx_build
-          cd wx_build
-          ../configure --with-opengl --disable-shared
-          make
-          make install
-          cd ../..
+          choco install wxwidgets
       - name: Build
         run: |
           haxe hxwidgets.hxml
