@@ -41,7 +41,6 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
           cd wxWidgets
-          git checkout tags/3.1.5
           mkdir wx_build
           cd wx_build
           ../configure --with-opengl --disable-shared
@@ -69,7 +68,7 @@ jobs:
       - name: Install Haxelibs
         run: |
            haxelib setup ~/haxelib
-           haxelib install hxcpp > /dev/null
+           haxelib install hxcpp
            haxelib install haxeui-core
            haxelib install haxeui-hxwidgets
            haxelib install hxWidgets
@@ -77,7 +76,6 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
           cd wxWidgets
-          git checkout tags/3.1.5
           mkdir wx_build
           cd wx_build
           ../configure --with-opengl --disable-shared
