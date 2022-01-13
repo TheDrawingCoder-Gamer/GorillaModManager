@@ -3,5 +3,6 @@
     <checkbox id="enabled"/>
     <label id="name" />
     <label id="version" />
-    <label id="author"  marginRight="10"/>
+    <spacer width="100%"/>
+    <label id="author" />
 </hbox>

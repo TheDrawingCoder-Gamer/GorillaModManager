@@ -8,8 +8,10 @@
     <modlist id="modlist"></modlist>  
     <hbox width="100%"> 
         <button text="Install Mods" id="installMods" width="10%"/>
-        <hbox width="100%"  marginRight="10">
+        <spacer width="100%"/>
+        <hbox width="100%"  >
             <label text="Overwrite up-to-date mods"/>
+            
             <checkbox id="overwrite"/>
         </hbox>
     </hbox>  
