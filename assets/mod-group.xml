@@ -1,6 +1,6 @@
-<vbox>
+<vbox width="100%">
 <label id="title" text="example group"/>
-<vbox id="mods" marginLeft="5" width="100%">
+<vbox id="mods" marginLeft="15" width="100%">
 
 </vbox>
 </vbox>
