@@ -78,7 +78,11 @@ jobs:
       - name: Install wxWidgets
         shell: powershell
         run: |
-          choco install wxwidgets
+          git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
+          cd wxWidgets
+          cd build/msw
+          nmake /f makefile.vc BUILD=release
+          cd ../../..
       - name: Build
         run: |
           haxe hxwidgets.hxml
