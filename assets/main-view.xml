@@ -1,7 +1,16 @@
 <vbox style="padding: 5px;" width="100%" height="100%">
     <label text="Gorilla Mod Manager"/>
+    <hbox width="100%">
+    <label text="Gorilla Path"/>
+    <textfield id="monkePath" width="100%"/>
+    </hbox>
+    
     <modlist id="modlist"></modlist>  
     <hbox width="100%"> 
-        <button text="Install Mods" id="installMods"/>
+        <button text="Install Mods" id="installMods" width="10%"/>
+        <hbox width="100%"  marginRight="10">
+            <label text="Overwrite up-to-date mods"/>
+            <checkbox id="overwrite"/>
+        </hbox>
     </hbox>  
 </vbox>
