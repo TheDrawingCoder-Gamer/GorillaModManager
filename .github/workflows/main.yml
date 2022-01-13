@@ -45,7 +45,7 @@ jobs:
           cd wxWidgets
           mkdir wx_build
           cd wx_build
-          ../configure --with-opengl --disable-shared
+          ../configure --with-gtk --disable-shared
           make
           make install
           cd ../..
