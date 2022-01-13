@@ -67,12 +67,12 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with: 
-          name: windowsBuild
+          name: linuxBuild
           path: 'build/wxwidgets/'
   buildWindows: 
       runs-on: windows-latest
       env: 
-        WXWIN: 'D:\a\GorillaModManager\GorillaModManager\wxWidgets-3.1.3'
+        WXWIN: D:\a\GorillaModManager\GorillaModManager\wxWidgets-3.1.3
       steps: 
       - uses: actions/checkout@v2
       - uses: egor-tensin/vs-shell@v2
@@ -89,7 +89,6 @@ jobs:
            haxelib install hxWidgets
            haxelib install tink_http
       - name: Install wxWidgets
-        shell: powershell
         run: |
           C:\msys64\usr\bin\wget.exe https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
           7z x wxWidgets-3.1.3.tar.bz2
