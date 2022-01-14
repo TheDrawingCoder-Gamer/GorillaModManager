@@ -110,7 +110,6 @@ jobs:
           Remove-Item build/hxwidgets/obj -Recurse -Force
           Remove-Item build/hxwidgets/src -Recurse -Force
           Remove-Item build/hxwidgets/Build.xml -Force
-          Remove-Item build/hxwidgets/HxcppConfig.h -Force
           Remove-Item build/hxwidgets/Options.txt -Force
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
