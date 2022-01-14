@@ -35,8 +35,11 @@ class MainView extends VBox {
 				mods = mods.concat(haxe.Json.parse(File.getContent(file)));
 			} else {
 				// Web URL
-				var theJson:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(source));
+				trace(source);
+				downloadFile(source, Path.join([assetsPath, "modinfo.txt"]));
+				var theJson:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([assetsPath, "modinfo.txt"])));
 				mods = mods.concat(theJson);
+				FileSystem.deleteFile(Path.join([assetsPath, "modinfo.txt"]));
 			}
 		}
         for (mod in mods) {
