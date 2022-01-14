@@ -14,13 +14,14 @@ class Main {
         } else {
             MainView.gorillaPath = Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]);
             // If there is a command named "unzip"
+            #if !DISABLE_WGET_UNZIP
             if (Sys.command("which", ["unzip"]) == 0) {
                 // Allow command usage because it's probably more optimized than haxe code
                 MainView.existsZipCommand = true;
             }
             if (Sys.command("which", ["wget"]) == 0)
                 MainView.existsWget = true;
-            
+            #end
         }
        VersionSaver.deserialize();
         var app = new HaxeUIApp();
