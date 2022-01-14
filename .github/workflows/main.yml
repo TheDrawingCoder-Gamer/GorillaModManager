@@ -117,7 +117,7 @@ jobs:
         with: 
           name: windowsBuild
           path: 'build/hxwidgets/'
-    buildLinux:
+    buildMac:
       # The type of runner that the job will run on
       runs-on: macos-latest
 
