@@ -63,12 +63,12 @@ jobs:
       - name: Build
         run: |
           haxe hxwidgets.hxml
-          cp -R assets build/wxwidgets/
+          cp -R assets build/hxwidgets/
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with: 
           name: linuxBuild
-          path: 'build/wxwidgets/'
+          path: 'build/hxwidgets/'
   buildWindows: 
       runs-on: windows-latest
       env: 
@@ -106,5 +106,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: windowsBuild
-          path: 'build/wxwidgets/'
+          path: 'build/hxwidgets/'
 
