@@ -7,7 +7,7 @@ class Main {
         #if DEBUG
             MainView.assetsPath = Path.join([Sys.programPath(), "../../../"]);
         #else 
-            MainView.assetsPath = Path.withoutDirectory(Sys.programPath());
+            MainView.assetsPath = Path.directory(Sys.programPath());
         #end
         if (Sys.systemName() == "Windows") {
             MainView.gorillaPath = "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag";
