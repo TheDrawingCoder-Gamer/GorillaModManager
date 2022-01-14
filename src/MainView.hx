@@ -1,5 +1,6 @@
 package;
 
+import haxe.io.Bytes;
 import haxe.ui.core.Screen;
 import haxe.io.BytesInput;
 import haxe.zip.Uncompress;
@@ -7,7 +8,7 @@ import haxe.ui.containers.VBox;
 import haxe.ui.events.MouseEvent;
 import sys.io.File;
 import sys.FileSystem;
-import haxe.io.Path;
+using haxe.io.Path;
 import haxe.ui.events.UIEvent;
 import haxe.ui.containers.dialogs.Dialogs;
 using StringTools;
@@ -34,15 +35,8 @@ class MainView extends VBox {
 				mods = mods.concat(haxe.Json.parse(File.getContent(file)));
 			} else {
 				// Web URL
-                tink.http.Client.fetch(source).all().handle((o) -> {
-                    switch (o) {
-                        case Success(data):
-                            var theJson:Array<ModData> = haxe.Json.parse(data.body.toString());
-                            mods = mods.concat(theJson);
-                        case Failure(failure):
-                            trace(failure);
-                    }
-                });
+				var theJson:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(source));
+				mods = mods.concat(theJson);
 			}
 		}
         for (mod in mods) {
@@ -74,7 +68,6 @@ class MainView extends VBox {
 				case "linux-bepinex":
 					// Basically do what fixed my issues on Endeavour
 					// 1. Install normal bepinex
-					var failed = false;
 					if (!doInstallMod({
 						"name": "BepInEx",
 						"author": "BepInEx Team",
@@ -84,28 +77,14 @@ class MainView extends VBox {
 					  }))
 					  return false;
 					// 2. Download and overwrite with the magic files
-					tink.http.Client.fetch('https://github.com/BepInEx/BepInEx/files/7323852/winhttp.zip').all().handle((o) -> {
-						switch (o) {
-							case Success(d): 
-								unpackZip(d.body.toBytes());
-							case Failure(e): 
-								trace(e);
-								failed = true;
-						}
-					});
-					if (failed)
+					try {
+						downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7323852/winhttp.zip');
+						downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7357827/bepin4.zip');
+					} catch (e) {
+						trace(e);
 						return false;
-					tink.http.Client.fetch('https://github.com/BepInEx/BepInEx/files/7357827/bepin4.zip').all().handle((o) -> {
-						switch (o) {
-							case Success(d): 
-								unpackZip(d.body.toBytes());
-							case Failure(e): 
-								trace(e);
-								failed = true;
-						}
-					});
-					if (failed)
-						return false;
+					}
+					
 					return true;
 				case "wine-config": 
 					if (Sys.systemName() == "Windows") {
@@ -126,8 +105,9 @@ class MainView extends VBox {
 			}
 		} else {
 			try {
-				downloadAndUnpack(mod);
+				downloadAndUnpack(mod.download_url, mod.install_location);
 			} catch (e) {
+				trace(e);
 				return false;
 			}
 			return true;
@@ -158,28 +138,67 @@ class MainView extends VBox {
 		}
 		
 	}
-	private static function downloadAndUnpack(mod:ModData) {
-		if (existsWget && existsZipCommand) {
-			var oldCwd = Sys.getCwd();
-			Sys.setCwd(Path.join([gorillaPath, mod.install_location]));
-			Sys.command("wget", [mod.download_url]);
-			// good enough for C# good enough for me
-			trace(Path.withoutDirectory(mod.download_url));
-			Sys.command("unzip", ["-o", Path.withoutDirectory(mod.download_url)]);
-			FileSystem.deleteFile(Path.withoutDirectory(mod.download_url));
-			Sys.setCwd(oldCwd);
-		} else {
-			tink.http.Client.fetch(mod.download_url).all().handle((o) -> {
-				switch (o) {
-					case Success(d): 
-						unpackZip(d.body.toBytes(), mod.install_location);
-					case Failure(e): 
-						throw e;
-				}
-			});
-		}
+	private static function downloadAndUnpack(url:String, install_location:String = ".") {
+		download(url, Path.join([gorillaPath, install_location]));
+		var bytes = File.getBytes(Path.join([gorillaPath, install_location, url.withoutDirectory()]));
+		unpackZip(bytes, install_location);
+		FileSystem.deleteFile(Path.join([gorillaPath, install_location, url.withoutDirectory()]));
 		
 	}
+	private static function download(url:String, ?installPath:String = null) {
+		if (installPath == null)
+			installPath = gorillaPath;
+		if (existsWget) {
+			Sys.command("wget", ["-O", Path.join([installPath, url.withoutDirectory()]), url]);
+		} else {
+			trace(Path.join([installPath, url.withoutDirectory()]));
+			downloadFile(url, Path.join([installPath, url.withoutDirectory()]));
+			
+		}
+		
+		
+	}
+	// https://github.com/ianharrigan/hvm/blob/main/hvm/HVM.hx#L822-L861
+	private static function downloadFile(srcUrl:String, dstFile:String, isRedirect:Bool = false) {
+        if (isRedirect == false) {
+            trace("    " + srcUrl);
+        }
+        
+        var http = new sys.Http(srcUrl);
+        var httpsFailed:Bool = false;
+        var httpStatus:Int = -1;
+        http.onStatus = function(status:Int) {
+            httpStatus = status;
+            if (status == 302) { // follow redirects
+                var location = http.responseHeaders.get("location");
+                if (location == null) {
+                    location = http.responseHeaders.get("Location");
+                }
+                if (location != null) {
+                    downloadFile(location, dstFile, true);
+                } else {
+                    throw "302 (redirect) encountered but no 'location' header found";
+                }
+            }
+        }
+        http.onBytes = function(bytes:Bytes) {
+            if (httpStatus == 200) {
+                trace("    Download complete");
+                File.saveBytes(dstFile, bytes);
+            }
+        }
+        http.onError = function(error) {
+            if (!httpsFailed && srcUrl.indexOf("https:") > -1) {
+                httpsFailed = true;
+                trace("Problem downloading file using http secure: " + error);
+                trace("Trying again with http insecure...");
+                downloadFile( StringTools.replace(srcUrl, "https", "http"), dstFile);
+            } else {
+                throw "    Problem downloading file: " + error;
+            }
+        }
+        http.request();
+    }
 	private static function createPath(path:String) {
 		if (!FileSystem.exists(Path.join([path, ".."]))) {
 			createPath(Path.join([path, ".."]));
