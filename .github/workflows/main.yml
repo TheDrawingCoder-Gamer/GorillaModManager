@@ -164,6 +164,6 @@ jobs:
         - name: Publish Artifact
           uses: actions/upload-artifact@v2
           with: 
-            name: linuxBuild
+            name: macBuild
             path: 'build/hxwidgets/'
 
