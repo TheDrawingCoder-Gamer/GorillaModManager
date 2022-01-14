@@ -106,9 +106,9 @@ jobs:
         run: |
           haxe hxwidgets.hxml -D HXCPP_M64
           Copy-Item -Path "assets" -Destination "build/hxwidgets" -Recurse
-          rmdir build/hxwidgets/include /s /q
-          rmdir build/hxwidgets/obj /s /q
-          rmdir build/hxwidgets/src /s /q
+          Remove-Item build/hxwidgets/include -Recurse -Force
+          Remove-Item build/hxwidgets/obj -Recurse -Force
+          Remove-Item build/hxwidgets/src -Recurse -Force
           Remove-Item build/hxwidgets/Build.xml -Force
           Remove-Item build/hxwidgets/HxcppConfig.h -Force
           Remove-Item build/hxwidgets/Options.txt -Force
