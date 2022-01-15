@@ -48,7 +48,7 @@ class MainView extends VBox {
 		var goodMods = [];
 		try {
 			for (modItem in this.modlist.modItems()) {
-				if (modItem.enabled.selected && (!VersionSaver.isLatestVersion(modItem.mod) || this.overwrite.selected))
+				if (modItem.modEnabled.selected && (!VersionSaver.isLatestVersion(modItem.mod) || this.overwrite.selected))
 					if (!doInstallMod(modItem.mod)) {
 						trace("Failed to install mod: " + modItem.mod.name);
 					} else {

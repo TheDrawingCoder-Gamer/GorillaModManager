@@ -46,25 +46,25 @@ class ModList extends haxe.ui.containers.ScrollView {
     public function updateMods() {
         var modItems = this.modItems();
         for (modItem in modItems) {
-            modItem.enabled.disabled = false;
+            modItem.modEnabled.disabled = false;
         }
         __updateMods(modItems);
     }
     private function __updateMods(modItems:Array<ModItem>) {
         for (modItem in modItems) {
-            if (modItem.enabled.selected) {
+            if (modItem.modEnabled.selected) {
                 if (modItem.mod.dependencies != null && modItem.mod.dependencies.length != 0) {
                     for (depend in modItem.mod.dependencies) {
                         var dependency = modItems.find((item) -> item.mod.name == depend);
-                        if (!dependency.enabled.selected) {
-                            dependency.enabled.selected = true;
-                            dependency.enabled.disabled = true;
+                        if (!dependency.modEnabled.selected) {
+                            dependency.modEnabled.selected = true;
+                            dependency.modEnabled.disabled = true;
                             __updateMods(modItems);
                             // Stop this cycle and redo everything
                             break;
                         }
-                        if (!dependency.enabled.disabled) {
-                            dependency.enabled.disabled = true;
+                        if (!dependency.modEnabled.disabled) {
+                            dependency.modEnabled.disabled = true;
                         }
                         
                     }

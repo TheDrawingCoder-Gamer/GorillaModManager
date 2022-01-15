@@ -5,7 +5,11 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
-            MainView.assetsPath = Path.join([Sys.programPath(), "../../../"]);
+            #if USING_OPENFL
+            MainView.assetsPath = Path.join([Sys.programPath(), "../../../../../"]);
+            #else 
+               MainView.assetsPath = Path.join([Sys.programPath(), "../../../"]);
+            #end
         #else 
             MainView.assetsPath = Path.directory(Sys.programPath());
         #end

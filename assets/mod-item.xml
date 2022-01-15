@@ -1,8 +1,8 @@
 <hbox width="100%">
 
-    <checkbox id="enabled"/>
-    <label id="name" />
-    <label id="version" />
+    <checkbox id="modEnabled"/>
+    <label id="modName" />
+    <label id="modVersion" />
     <spacer width="100%"/>
-    <label id="author" />
+    <label id="modAuthor" />
 </hbox>
