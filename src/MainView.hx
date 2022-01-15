@@ -26,8 +26,9 @@ class MainView extends VBox {
 		this.monkePathDialog.monkePath.text = gorillaPath;
 		var mods:Array<ModData> = [];
 		for (source in File.getContent('$assetsPath/assets/sources.txt').split('\n')) {
-			if (source.startsWith("local:")) {
-				var file = Path.join([assetsPath, source.substr(6)]);
+			var goodSource = source.trim();
+			if (goodSource.startsWith("local:")) {
+				var file = Path.join([assetsPath, goodSource.substr(6)]);
 				if (!FileSystem.exists(file)) {
 					trace("Ignoring invalid source directive");
 					continue;
@@ -35,7 +36,7 @@ class MainView extends VBox {
 				mods = mods.concat(haxe.Json.parse(File.getContent(file)));
 			} else {
 				// Web URL
-				var theJson:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(source));
+				var theJson:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(goodSource));
 				mods = mods.concat(theJson);
 			}
 		}
