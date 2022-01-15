@@ -25,20 +25,7 @@ class MainView extends VBox {
 		super();
 		instance = this;
 		this.monkePathDialog.monkePath.text = gorillaPath;
-		var mods:Array<ModData> = [];
-		for (source in XmlDeserializer.deserialize()) {
-			switch (source) {
-				case Asset(asset): 
-					var file = Path.join([assetsPath, "assets", asset]);
-					if (!FileSystem.exists(file)) {
-						trace("Ignoring Invalid Source Directive...");
-						continue;
-					}
-					mods = mods.concat(haxe.Json.parse(File.getContent(file)));
-				case Url(url):
-					mods = mods.concat(haxe.Json.parse(sys.Http.requestUrl(url)));
-			}
-		}
+		var mods:Array<ModData> = XmlDeserializer.deserialize();
         for (mod in mods) {
             this.modlist.addMod(mod);
         }

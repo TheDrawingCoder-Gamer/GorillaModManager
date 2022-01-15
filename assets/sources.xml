@@ -1,5 +1,8 @@
 <xml>
-    <url name="https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json"/>
+    <url name="https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json">
+        <!-- Gorilla Cosmetics doesn't work on latest releases -->
+        <remove name="Gorilla Cosmetics"/>
+    </url>
     <!-- Windows should NOT have linux bepinex -->
     <asset name="bepinex-linux.json" unless="windows"/>
 </xml>
