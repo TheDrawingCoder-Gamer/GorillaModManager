@@ -1,0 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build OSX
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  
+  # This workflow contains a single job called "build"
+  buildMac:
+      # The type of runner that the job will run on
+      runs-on: macos-latest
+
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      steps:
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        - uses: actions/checkout@v2
+
+        - uses: krdlab/setup-haxe@master
+          with: 
+            haxe-version: 4.2.4
+
+        - name: Install Haxelibs
+          run: |
+            haxelib setup ~/haxelib
+            haxelib install hxcpp > /dev/null
+            haxelib install haxeui-core
+            haxelib install haxeui-hxwidgets
+            haxelib install hxWidgets
+        - name: Setup app (haxe ${{ matrix.haxe-version }}, ${{ matrix.os }})
+          env:
+            ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          run: |
+
+            wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
+            tar xjf wxWidgets-3.1.3.tar.bz2
+            cd wxWidgets-3.1.3
+            cp ../.github/workflows/include/wx/osx/setup.h include/wx/osx/setup.h 
+            ./configure --with-opengl --disable-shared --without-libjpeg > log.txt
+            cp ../.github/workflows/include/wx/osx/setup.h include/wx/osx/setup.h 
+            make
+            sudo make install
+            cd ..
+        - name: Build
+          run: |
+            haxe hxwidgets.hxml
+            cp -R assets build/hxwidgets/
+            rm -rf build/hxwidgets/include
+            rm -rf build/hxwidgets/obj
+            rm -rf build/hxwidgets/src
+            rm -f build/hxwidgets/Build.xml
+            rm -f build/hxwidgets/HxcppConfig.h
+            rm -f build/hxwidgets/Options.txt
+        - name: Publish Artifact
+          uses: actions/upload-artifact@v2
+          with: 
+            name: macBuild
+            path: 'build/hxwidgets/'
+

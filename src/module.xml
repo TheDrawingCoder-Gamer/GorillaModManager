@@ -5,4 +5,12 @@
         <class name="components.ModList"/>
         <class name="components.DialogTextField"/>
     </components>
+    <resources>
+        <resource path="assets/styles" prefix="GMM/styles" />
+    </resources>
+    <themes>
+        <bulby parent="default">
+            <style resource="GMM/styles/style.css"/>
+        </bulby>
+    </themes>
 </module>

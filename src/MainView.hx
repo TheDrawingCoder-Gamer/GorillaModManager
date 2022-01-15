@@ -1,5 +1,6 @@
 package;
 
+import haxe.ui.containers.dialogs.Dialog;
 import haxe.io.Bytes;
 import haxe.ui.core.Screen;
 import haxe.io.BytesInput;
@@ -25,18 +26,17 @@ class MainView extends VBox {
 		instance = this;
 		this.monkePathDialog.monkePath.text = gorillaPath;
 		var mods:Array<ModData> = [];
-		for (source in File.getContent('$assetsPath/assets/sources.txt').split('\n')) {
-			if (source.startsWith("local:")) {
-				var file = Path.join([assetsPath, source.substr(6)]);
-				if (!FileSystem.exists(file)) {
-					trace("Ignoring invalid source directive");
-					continue;
-				}
-				mods = mods.concat(haxe.Json.parse(File.getContent(file)));
-			} else {
-				// Web URL
-				var theJson:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(source));
-				mods = mods.concat(theJson);
+		for (source in XmlDeserializer.deserialize()) {
+			switch (source) {
+				case Asset(asset): 
+					var file = Path.join([assetsPath, "assets", asset]);
+					if (!FileSystem.exists(file)) {
+						trace("Ignoring Invalid Source Directive...");
+						continue;
+					}
+					mods = mods.concat(haxe.Json.parse(File.getContent(file)));
+				case Url(url):
+					mods = mods.concat(haxe.Json.parse(sys.Http.requestUrl(url)));
 			}
 		}
         for (mod in mods) {
@@ -211,5 +211,37 @@ class MainView extends VBox {
 	@:bind(monkePathDialog.monkePath, UIEvent.CHANGE)
 	private function updatePath(_:UIEvent) {
 		gorillaPath = this.monkePathDialog.monkePath.text;
+	}
+	@:bind(deleteMods, MouseEvent.CLICK) 
+	private function deleteModsAction(_:MouseEvent) {
+		var dialog = new components.WarningDialog("This will delete ALL MODS AND ALL OF THEIR CONFIGURATION. \n\nIs this ok?");
+		var success = false;
+		dialog.onDialogClosed = (b:DialogEvent) -> {
+			if (b.button == DialogButton.OK) {
+				success = true;
+			}
+		};
+		dialog.showDialog();
+		trace("closed?");
+		if (!success)
+			return;
+		trace("accepted!");
+		deleteDirRecursively(Path.join([gorillaPath, "BepInEx"]));
+	}
+	// https://ashes999.github.io/learnhaxe/recursively-delete-a-directory-in-haxe.html
+	private static function deleteDirRecursively(path:String) : Void
+	{
+		if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path))
+		{
+		var entries = sys.FileSystem.readDirectory(path);
+		for (entry in entries) {
+			if (sys.FileSystem.isDirectory(path + '/' + entry)) {
+			deleteDirRecursively(path + '/' + entry);
+			sys.FileSystem.deleteDirectory(path + '/' + entry);
+			} else {
+			sys.FileSystem.deleteFile(path + '/' + entry);
+			}
+		}
+		}
 	}
 }

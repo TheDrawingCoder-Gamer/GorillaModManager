@@ -1,5 +1,6 @@
 package ;
 
+import haxe.ui.Toolkit;
 import haxe.ui.HaxeUIApp;
 import haxe.io.Path;
 class Main {
@@ -23,6 +24,7 @@ class Main {
                 MainView.existsWget = true;
             #end
         }
+        Toolkit.theme = "bulby";
        VersionSaver.deserialize();
         var app = new HaxeUIApp();
         app.ready(function() {

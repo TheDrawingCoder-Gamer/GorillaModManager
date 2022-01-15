@@ -1,0 +1,5 @@
+<xml>
+    <url name="https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json"/>
+    <!-- Windows should NOT have linux bepinex -->
+    <asset name="bepinex-linux.json" unless="windows"/>
+</xml>

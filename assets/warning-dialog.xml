@@ -1,0 +1,4 @@
+<vbox width="500">
+    <label id="warningText" text="Unspecified Warning"/>
+
+</vbox>
