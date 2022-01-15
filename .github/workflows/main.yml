@@ -96,7 +96,7 @@ jobs:
       - name: Build
         shell: powershell
         run: |
-          openfl build windows
+          haxelib run openfl build windows
           Copy-Item -Path "assets" -Destination "build/openfl/build/windows/bin/" -Recurse
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
