@@ -14,12 +14,12 @@ typedef ModData = {
 
 class ModDataTools {
     public static function mangleName(name:String) { 
-        return name.toLowerCase().trim().replace(" ", "-");
+        return name.toLowerCase().trim().replace(" ", "_");
     }
     public static function fullyMangle(name:String) {
         var mangName = mangleName(name);
         var split = mangName.split("");
-        var regexp = ~/[A-Za-z0-9-_]/;
+        var regexp = ~/[A-Za-z0-9_]/;
         for (i => char in split) {
             if (!regexp.match(char)) {
                 split[i] = "_";
