@@ -16,7 +16,6 @@ class ModList extends haxe.ui.containers.ScrollView {
         if (group == null) {
             group = new ModGroup(mod.group);
             this.groups.addComponent(group);
-            trace(this.groups.childComponents);
         }
         group.addMod(mod);
     }
@@ -56,6 +55,9 @@ class ModList extends haxe.ui.containers.ScrollView {
                 if (modItem.mod.dependencies != null && modItem.mod.dependencies.length != 0) {
                     for (depend in modItem.mod.dependencies) {
                         var dependency = modItems.find((item) -> item.mod.name == depend);
+                        if (dependency == null)
+                            // crashes otherwise lol
+                            continue;
                         if (!dependency.enabled.selected) {
                             dependency.enabled.selected = true;
                             dependency.enabled.disabled = true;

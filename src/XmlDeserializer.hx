@@ -7,11 +7,16 @@ enum SourceKind {
     Url(url:String);
     Asset(name:String);
 }
+typedef Group = {
+    var name:String;
+    var rank:Int;
+}
 class XmlDeserializer {
     public static function deserialize() {
         var file = File.getContent('${MainView.assetsPath}/assets/sources.xml');
         var xml:Xml = Xml.parse(file);
         var mods = [];
+        var groups:Array<Group> = [];
         for (element in xml.firstElement().elements()) {
             if (!isApplicable(element))
                 continue;
@@ -32,9 +37,23 @@ class XmlDeserializer {
                         assetMods = assetMods.filter((it) -> it.name != remove.get('name'));
                     }
                     mods = mods.concat(assetMods);
+                case "groupurl": 
+                    groups = groups.concat(haxe.Json.parse(sys.Http.requestUrl(element.get("name"))));
+                    // to do sorting?
+                case "groupasset": 
+                    groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([MainView.assetsPath, "assets", element.get("name")]))));
             }
         }
-        return mods;
+        groups.sort((x, y) -> x.rank - y.rank);
+        var groupsData:Array<{name:String, mods:Array<ModData>}> = [];
+        for (group in groups) {
+            var goodMods = mods.filter((it) -> it.group == group.name);
+            mods = mods.filter((it) -> it.group != group.name);
+            groupsData.push({name: group.name, mods: goodMods});
+        }
+        groupsData.push({name: "GMM::Unknown", mods: mods});
+        
+        return groupsData.flatMap((it) -> it.mods);
     }
     private static function isApplicable(element:Xml) {
         if (element.get("unless") != null) {
