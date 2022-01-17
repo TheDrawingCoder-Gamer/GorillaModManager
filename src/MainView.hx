@@ -17,14 +17,12 @@ using StringTools;
 @:build(haxe.ui.ComponentBuilder.build("assets/main-view.xml"))
 class MainView extends VBox {
 	public static var instance:MainView = null;
-	public static var gorillaPath:String = null;
-	public static var assetsPath:String = null;
 	public static var existsZipCommand:Bool = false;
 	public static var existsWget:Bool = false;
 	public function new() {
 		super();
 		instance = this;
-		this.monkePathDialog.monkePath.text = gorillaPath;
+		this.monkePathDialog.monkePath.text = GorillaPath.gorillaPath;
 		var mods:Array<ModData> = XmlDeserializer.deserialize();
         for (mod in mods) {
             this.modlist.addMod(mod);
@@ -110,31 +108,31 @@ class MainView extends VBox {
 					// ignore folders with no contents because fuck you
 				} else {
 					// Overwrite
-					createPath(Path.directory(Path.join([gorillaPath, installPath, entry.fileName])));
-					File.saveBytes(Path.join([gorillaPath, installPath, entry.fileName]), haxe.zip.Reader.unzip(entry));
+					createPath(Path.directory(Path.join([GorillaPath.gorillaPath, installPath, entry.fileName])));
+					File.saveBytes(Path.join([GorillaPath.gorillaPath, installPath, entry.fileName]), haxe.zip.Reader.unzip(entry));
 				}
 				
 			}
 		} else {
 			var oldCwd = Sys.getCwd();
-			File.saveBytes(Path.join([gorillaPath, installPath, "temp.zip"]), zipFile);
-			Sys.setCwd(gorillaPath);
-			Sys.command("unzip", ["-o", Path.join([gorillaPath, installPath, "temp.zip"])]);
-			FileSystem.deleteFile(Path.join([gorillaPath, installPath, "temp.zip"]));
+			File.saveBytes(Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"]), zipFile);
+			Sys.setCwd(GorillaPath.gorillaPath);
+			Sys.command("unzip", ["-o", Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"])]);
+			FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"]));
 			Sys.setCwd(oldCwd);
 		}
 		
 	}
 	private static function downloadAndUnpack(url:String, install_location:String = ".") {
-		download(url, Path.join([gorillaPath, install_location]));
-		var bytes = File.getBytes(Path.join([gorillaPath, install_location, url.withoutDirectory()]));
+		download(url, Path.join([GorillaPath.gorillaPath, install_location]));
+		var bytes = File.getBytes(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
 		unpackZip(bytes, install_location);
-		FileSystem.deleteFile(Path.join([gorillaPath, install_location, url.withoutDirectory()]));
+		FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
 		
 	}
 	private static function download(url:String, ?installPath:String = null) {
 		if (installPath == null)
-			installPath = gorillaPath;
+			installPath = GorillaPath.gorillaPath;
 		if (existsWget) {
 			Sys.command("wget", ["-O", Path.join([installPath, url.withoutDirectory()]), url]);
 		} else {
@@ -197,7 +195,7 @@ class MainView extends VBox {
 	}
 	@:bind(monkePathDialog.monkePath, UIEvent.CHANGE)
 	private function updatePath(_:UIEvent) {
-		gorillaPath = this.monkePathDialog.monkePath.text;
+		GorillaPath.gorillaPath = this.monkePathDialog.monkePath.text;
 	}
 	@:bind(deleteMods, MouseEvent.CLICK) 
 	private function deleteModsAction(_:MouseEvent) {
@@ -213,7 +211,7 @@ class MainView extends VBox {
 		if (!success)
 			return;
 		trace("accepted!");
-		deleteDirRecursively(Path.join([gorillaPath, "BepInEx"]));
+		deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"]));
 	}
 	// https://ashes999.github.io/learnhaxe/recursively-delete-a-directory-in-haxe.html
 	private static function deleteDirRecursively(path:String) : Void

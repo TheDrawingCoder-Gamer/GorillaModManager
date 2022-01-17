@@ -13,9 +13,9 @@ typedef Group = {
 }
 class XmlDeserializer {
     public static function deserialize() {
-        var file = File.getContent('${MainView.assetsPath}/assets/sources.xml');
+        var file = File.getContent('${GorillaPath.assetsPath}/assets/sources.xml');
         var xml:Xml = Xml.parse(file);
-        var mods = [];
+        var mods:Array<ModData> = [];
         var groups:Array<Group> = [];
         for (element in xml.firstElement().elements()) {
             if (!isApplicable(element))
@@ -28,20 +28,28 @@ class XmlDeserializer {
                             continue;
                         urlMods = urlMods.filter((it) -> it.name != remove.get('name'));
                     }
+                    for (mod in urlMods) {
+                        // Overwrite
+                        mods = mods.filter((it) -> it.name != mod.name);
+                    }
                     mods = mods.concat(urlMods);
                 case "asset": 
-                    var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([MainView.assetsPath, "assets", element.get('name')])));
+                    var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "assets", element.get('name')])));
                     for (remove in element.elements()) {
                         if (remove.nodeName != "remove" || !isApplicable(remove))
                             continue;
                         assetMods = assetMods.filter((it) -> it.name != remove.get('name'));
+                    }
+                    for (mod in assetMods) {
+                        // Overwrite
+                        mods = mods.filter((it) -> it.name != mod.name);
                     }
                     mods = mods.concat(assetMods);
                 case "groupurl": 
                     groups = groups.concat(haxe.Json.parse(sys.Http.requestUrl(element.get("name"))));
                     // to do sorting?
                 case "groupasset": 
-                    groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([MainView.assetsPath, "assets", element.get("name")]))));
+                    groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "assets", element.get("name")]))));
             }
         }
         groups.sort((x, y) -> x.rank - y.rank);

@@ -6,14 +6,14 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
-            MainView.assetsPath = Path.join([Sys.programPath(), "../../../"]);
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../"]);
         #else 
-            MainView.assetsPath = Path.directory(Sys.programPath());
+            GorillaPath.assetsPath = Path.directory(Sys.programPath());
         #end
         if (Sys.systemName() == "Windows") {
-            MainView.gorillaPath = "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag";
+            GorillaPath.gorillaPath = "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag";
         } else {
-            MainView.gorillaPath = Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]);
+            GorillaPath.gorillaPath = Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]);
             // If there is a command named "unzip"
             #if !DISABLE_WGET_UNZIP
             if (Sys.command("which", ["unzip"]) == 0) {

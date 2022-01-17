@@ -11,11 +11,11 @@ class VersionSaver {
         for (mod in theMods) {
             Reflect.setField(mods, ModDataTools.fullyMangle(mod.name), mod.version);
         }
-        File.saveContent(Path.join([MainView.gorillaPath, "GMM-Version.json"]), haxe.Json.stringify(mods));
+        File.saveContent(Path.join([GorillaPath.gorillaPath, "GMM-Version.json"]), haxe.Json.stringify(mods));
     }
     public static function deserialize() {
-        if (FileSystem.exists(Path.join([MainView.gorillaPath, "GMM-Version.json"])))
-            mods = haxe.Json.parse(File.getContent(Path.join([MainView.gorillaPath, "GMM-Version.json"])));
+        if (FileSystem.exists(Path.join([GorillaPath.gorillaPath, "GMM-Version.json"])))
+            mods = haxe.Json.parse(File.getContent(Path.join([GorillaPath.gorillaPath, "GMM-Version.json"])));
         else 
             mods = {};
     }
