@@ -16,9 +16,6 @@ class ModItem extends haxe.ui.containers.HBox {
     }
     @:bind(this, MouseEvent.DBL_CLICK)
     private function doShowSource(me:MouseEvent) {
-        trace("hello");
-        if (temp > 0) throw "foo";
-        temp++;
         if (mod.git_path == null)
             return;
         me.bubble = false;
