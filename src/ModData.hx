@@ -7,6 +7,7 @@ typedef ModData = {
     var author:String;
     var version:String;
     var download_url:String;
+    var ?git_path:String;
     var group:String;
     var ?dependencies:Array<String>;
     var ?install_location:String;
