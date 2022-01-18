@@ -10,9 +10,9 @@ class Main {
         #else 
             GorillaPath.assetsPath = Path.directory(Sys.programPath());
         #end
-        if (Sys.systemName() == "Windows") {
+        #if windows
             GorillaPath.gorillaPath = "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag";
-        } else {
+        #else
             GorillaPath.gorillaPath = Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]);
             // If there is a command named "unzip"
             #if !DISABLE_WGET_UNZIP
@@ -23,7 +23,7 @@ class Main {
             if (Sys.command("which", ["wget"]) == 0)
                 MainView.existsWget = true;
             #end
-        }
+        #end
         Toolkit.theme = "bulby";
        VersionSaver.deserialize();
         var app = new HaxeUIApp();

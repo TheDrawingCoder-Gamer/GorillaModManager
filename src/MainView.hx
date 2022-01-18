@@ -72,10 +72,10 @@ class MainView extends VBox {
 					
 					return true;
 				case "wine-config": 
-					if (Sys.systemName() == "Windows") {
+					#if windows
 						Dialogs.messageBox("Windows doesn't require wine configuration",'Info', 'info');
 						return true;
-					}
+					#else
 					if (Sys.command('which', ["protontricks"]) != 0) {
 						Dialogs.messageBox("Protontricks must be installed", 'Error', 'error');
 						return false;
@@ -84,6 +84,7 @@ class MainView extends VBox {
 					Sys.command('protontricks', ["1533390", "winecfg"]);
 					
 					return true;
+					#end
 				default:
 
 					return false;

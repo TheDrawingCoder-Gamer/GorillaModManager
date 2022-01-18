@@ -1,6 +1,7 @@
 -cp src
 -main Main
 
+--macro helpers.PlatformMacro.definePlatform()
 -lib haxeui-core
 -lib haxeui-hxwidgets
 -lib hxWidgets

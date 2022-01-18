@@ -67,27 +67,33 @@ class XmlDeserializer {
         if (element.get("unless") != null) {
             switch (element.get("unless")) {
                 case "windows": 
-                    if (Sys.systemName() == "Windows") 
+                    #if windows
                         return false;
+                    #end
                 case "mac": 
-                    if (Sys.systemName() == "Mac") 
+                    #if mac 
                         return false;
+                    #end
                 case "linux": 
-                    if (Sys.systemName() == "Linux")
+                    #if linux
                         return false;
+                    #end
             }
         }
         if (element.get("if") != null) {
             switch (element.get("if")) {
                 case "windows": 
-                    if (Sys.systemName() != "Windows") 
+                    #if windows
                         return false;
+                    #end
                 case "mac": 
-                    if (Sys.systemName() != "Mac") 
+                    #if mac 
                         return false;
+                    #end
                 case "linux": 
-                    if (Sys.systemName() != "Linux")
+                    #if linux
                         return false;
+                    #end
             }
         }
         return true;
