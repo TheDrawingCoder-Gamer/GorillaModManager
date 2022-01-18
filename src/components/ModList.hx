@@ -17,7 +17,9 @@ class ModList extends haxe.ui.containers.ScrollView {
             group = new ModGroup(mod.group);
             this.groups.addComponent(group);
         }
-        group.addMod(mod);
+        
+        var moditem = group.addMod(mod);
+        moditem.onClick = (_) -> { for (group in this.findComponents(null, ModGroup)) group.clearSelection(); moditem.addClass("selected"); };
     }
     public function modItems() {
         var modItems = [];

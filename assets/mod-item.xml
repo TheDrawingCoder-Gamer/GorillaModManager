@@ -1,4 +1,4 @@
-<hbox width="100%" styleNames="moditem">
+<hbox width="100%" styleNames="moditem" paddingLeft="15">
     <checkbox id="enabled"/>
     <label id="name" />
     <label id="version" />

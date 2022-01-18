@@ -9,9 +9,18 @@ class ModGroup extends haxe.ui.containers.VBox {
         this.id = ModDataTools.mangleName(name);
     }
     public function addMod(mod:ModData) {
-        this.mods.addComponent(new ModItem(mod));
+        var moditem = new ModItem(mod);
+        this.mods.addComponent(moditem);
+        
         if (ModDataTools.mangleName(mod.group) != this.id) {
             trace("Mod Group is not the same as the group being added to... Ignoring");
+        }
+        return moditem;
+    }
+
+    public function clearSelection() {
+        for (moditem in this.mods.findComponents(null, ModItem)) {
+            moditem.removeClass("selected");
         }
     }
 }
