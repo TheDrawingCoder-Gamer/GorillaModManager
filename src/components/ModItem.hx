@@ -19,13 +19,7 @@ class ModItem extends haxe.ui.containers.HBox {
         if (mod.git_path == null)
             return;
         me.bubble = false;
-        #if windows
-            Sys.command("start", ['https://github.com/${mod.git_path}']);
-        #elseif mac
-            Sys.command("open", ['https://github.com/${mod.git_path}']);
-        #else 
-            Sys.command("xdg-open", ['https://github.com/${mod.git_path}']);
-        #end
+        helpers.Util.openURL('https://github.com/${mod.git_path}');
 
     }
 }
