@@ -7,6 +7,7 @@ using Lambda;
 @:keep
 @:build(haxe.ui.ComponentBuilder.build("assets/mod-list.xml"))
 class ModList extends haxe.ui.containers.ScrollView {
+    public var selectedItem:ModItem = null;
     public function new() {
         super();
     }
@@ -19,7 +20,7 @@ class ModList extends haxe.ui.containers.ScrollView {
         }
         
         var moditem = group.addMod(mod);
-        moditem.onClick = (_) -> { for (group in this.findComponents(null, ModGroup)) group.clearSelection(); moditem.addClass("selected"); };
+        moditem.onClick = (_) -> { for (group in this.findComponents(null, ModGroup)) group.clearSelection(); moditem.addClass("selected"); selectedItem = moditem; };
     }
     public function modItems() {
         var modItems = [];

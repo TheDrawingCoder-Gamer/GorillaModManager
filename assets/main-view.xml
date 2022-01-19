@@ -5,7 +5,8 @@
         <vbox text="Mods" width="100%" height="100%">
             <modlist id="modlist"></modlist>  
             <hbox width="100%"> 
-                <button text="Install/Update" id="installMods" width="15%"/>
+                <button text="Install/Update" id="installMods"/>
+                <button text="Mod Info" id="modinfo" />
                 <spacer width="100%"/>
                 <hbox width="100%"  >
                     <label text="Overwrite up-to-date mods"/>

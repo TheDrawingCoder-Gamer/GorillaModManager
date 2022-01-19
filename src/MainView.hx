@@ -12,13 +12,12 @@ import sys.FileSystem;
 using haxe.io.Path;
 import haxe.ui.events.UIEvent;
 import haxe.ui.containers.dialogs.Dialogs;
+import helpers.Util;
 using StringTools;
 
 @:build(haxe.ui.ComponentBuilder.build("assets/main-view.xml"))
 class MainView extends VBox {
 	public static var instance:MainView = null;
-	public static var existsZipCommand:Bool = false;
-	public static var existsWget:Bool = false;
 	public function new() {
 		super();
 		instance = this;
@@ -101,102 +100,36 @@ class MainView extends VBox {
 		return false;
 		
 	} 
-	public static function unpackZip(zipFile:haxe.io.Bytes, ?installPath:String = ".") {
-		if (!existsZipCommand) {
-			for (entry in haxe.zip.Reader.readZip(new BytesInput(zipFile))) {
-				if ((entry.data == null || entry.dataSize == 0 ) ) {
-					// git in to it
-					// ignore folders with no contents because fuck you
-				} else {
-					// Overwrite
-					createPath(Path.directory(Path.join([GorillaPath.gorillaPath, installPath, entry.fileName])));
-					File.saveBytes(Path.join([GorillaPath.gorillaPath, installPath, entry.fileName]), haxe.zip.Reader.unzip(entry));
-				}
-				
-			}
+	public function selectedItemChanged() {
+		if (this.modlist.selectedItem == null || this.modlist.selectedItem.mod.git_path == null) {
+			modinfo.disabled = true;
 		} else {
-			var oldCwd = Sys.getCwd();
-			File.saveBytes(Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"]), zipFile);
-			Sys.setCwd(GorillaPath.gorillaPath);
-			Sys.command("unzip", ["-o", Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"])]);
-			FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, installPath, "temp.zip"]));
-			Sys.setCwd(oldCwd);
+			modinfo.disabled = false;
+
 		}
-		
 	}
+
 	private static function downloadAndUnpack(url:String, install_location:String = ".") {
 		download(url, Path.join([GorillaPath.gorillaPath, install_location]));
-		var bytes = File.getBytes(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
-		unpackZip(bytes, install_location);
+		Util.unzipFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
 		FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
-		
 	}
 	private static function download(url:String, ?installPath:String = null) {
 		if (installPath == null)
 			installPath = GorillaPath.gorillaPath;
-		if (existsWget) {
-			Sys.command("wget", ["-O", Path.join([installPath, url.withoutDirectory()]), url]);
-		} else {
-			trace(Path.join([installPath, url.withoutDirectory()]));
-			downloadFile(url, Path.join([installPath, url.withoutDirectory()]));
-			
-		}
-		
+		Util.downloadAndSave(url, Path.join([installPath, url.withoutDirectory()]));
 		
 	}
-	// https://github.com/ianharrigan/hvm/blob/main/hvm/HVM.hx#L822-L861
-	private static function downloadFile(srcUrl:String, dstFile:String, isRedirect:Bool = false) {
-        if (isRedirect == false) {
-            trace("    " + srcUrl);
-        }
-        
-        var http = new sys.Http(srcUrl);
-        var httpsFailed:Bool = false;
-        var httpStatus:Int = -1;
-        http.onStatus = function(status:Int) {
-            httpStatus = status;
-            if (status == 302) { // follow redirects
-                var location = http.responseHeaders.get("location");
-                if (location == null) {
-                    location = http.responseHeaders.get("Location");
-                }
-                if (location != null) {
-                    downloadFile(location, dstFile, true);
-                } else {
-                    throw "302 (redirect) encountered but no 'location' header found";
-                }
-            }
-        }
-        http.onBytes = function(bytes:Bytes) {
-            if (httpStatus == 200) {
-                trace("    Download complete");
-                File.saveBytes(dstFile, bytes);
-            }
-        }
-        http.onError = function(error) {
-            if (!httpsFailed && srcUrl.indexOf("https:") > -1) {
-                httpsFailed = true;
-                trace("Problem downloading file using http secure: " + error);
-                trace("Trying again with http insecure...");
-                downloadFile( StringTools.replace(srcUrl, "https", "http"), dstFile);
-            } else {
-                throw "    Problem downloading file: " + error;
-            }
-        }
-        http.request();
-    }
-	private static function createPath(path:String) {
-		if (!FileSystem.exists(Path.join([path, ".."]))) {
-			createPath(Path.join([path, ".."]));
-		}
-		if (!FileSystem.exists(path)) {
-			FileSystem.createDirectory(path);
-		}
-		
-	}
+	
 	@:bind(monkePathDialog.monkePath, UIEvent.CHANGE)
 	private function updatePath(_:UIEvent) {
 		GorillaPath.gorillaPath = this.monkePathDialog.monkePath.text;
+	}
+	@:bind(modinfo, MouseEvent.CLICK)
+	private function showModInfo(_:MouseEvent) {
+		if (modlist.selectedItem != null && modlist.selectedItem.mod.git_path != null) {
+			helpers.Util.openURL('https://github.com/${modlist.selectedItem.mod.git_path}');
+		}
 	}
 	@:bind(deleteMods, MouseEvent.CLICK) 
 	private function deleteModsAction(_:MouseEvent) {
