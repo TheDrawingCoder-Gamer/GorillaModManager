@@ -6,9 +6,9 @@
             <modlist id="modlist"></modlist>  
             <hbox width="100%"> 
                 <button text="Install/Update" id="installMods"/>
-                <button text="Mod Info" id="modinfo" />
+                <button text="Mod Info" id="modinfo" disabled="true"/>
                 <spacer width="100%"/>
-                <hbox width="100%"  >
+                <hbox   >
                     <label text="Overwrite up-to-date mods"/>
                     
                     <checkbox id="overwrite"/>

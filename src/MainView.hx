@@ -26,6 +26,14 @@ class MainView extends VBox {
         for (mod in mods) {
             this.modlist.addMod(mod);
         }
+		modlist.onSelectionChanged = () -> {
+			if (this.modlist.selectedItem == null || this.modlist.selectedItem.mod.git_path == null) {
+				modinfo.disabled = true;
+			} else {
+				modinfo.disabled = false;
+	
+			}
+		};
 	}
 	@:bind(installMods, MouseEvent.CLICK)
 	public function doInstallMods(e:MouseEvent) {
@@ -100,15 +108,6 @@ class MainView extends VBox {
 		return false;
 		
 	} 
-	public function selectedItemChanged() {
-		if (this.modlist.selectedItem == null || this.modlist.selectedItem.mod.git_path == null) {
-			modinfo.disabled = true;
-		} else {
-			modinfo.disabled = false;
-
-		}
-	}
-
 	private static function downloadAndUnpack(url:String, install_location:String = ".") {
 		download(url, Path.join([GorillaPath.gorillaPath, install_location]));
 		Util.unzipFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
