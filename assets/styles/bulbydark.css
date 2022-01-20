@@ -10,6 +10,9 @@ moditem.selected {
     background-color: black;
     color: white;
 }
+.tabview {
+    border: none;
+}
 .textfield {
     background-color: #3d3d3d;
     color: orange;
@@ -29,7 +32,7 @@ moditem.selected {
 }
 
 .tabview > .tabview-content {
-    border: 1px solid #ABABAB;
+    border: 1px solid #1a1a1a;
     padding: 5px;
     background-color: #111111;
     color: white;
