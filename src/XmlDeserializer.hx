@@ -2,6 +2,7 @@ package;
 
 import sys.io.File;
 import haxe.io.Path;
+import helpers.Util;
 using Lambda;
 enum SourceKind {
     Url(url:String);
@@ -22,7 +23,7 @@ class XmlDeserializer {
                 continue;
             switch (element.nodeName) {
                 case "url": 
-                    var urlMods:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(element.get("name")));
+                    var urlMods:Array<ModData> = haxe.Json.parse(Util.requestURL(element.get("name")));
                     for (remove in element.elements()) {
                         if (remove.nodeName != "remove" || !isApplicable(remove))
                             continue;
@@ -46,7 +47,7 @@ class XmlDeserializer {
                     }
                     mods = mods.concat(assetMods);
                 case "groupurl": 
-                    groups = groups.concat(haxe.Json.parse(sys.Http.requestUrl(element.get("name"))));
+                    groups = groups.concat(haxe.Json.parse(Util.requestURL(element.get("name"))));
                     // to do sorting?
                 case "groupasset": 
                     groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "assets", element.get("name")]))));

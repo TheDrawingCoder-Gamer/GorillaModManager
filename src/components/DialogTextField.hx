@@ -2,6 +2,8 @@ package components;
 
 import haxe.ui.containers.HBox;
 import haxe.ui.events.MouseEvent;
+import haxe.ui.containers.dialogs.Dialogs;
+import haxe.ui.containers.dialogs.Dialog;
 @:build(haxe.ui.ComponentBuilder.build("assets/text-dialog.xml"))
 class DialogTextField extends HBox {
     public function new() {
@@ -11,10 +13,15 @@ class DialogTextField extends HBox {
     public function openDialog(_:MouseEvent) {
         // Now only works on cpp!
         trace("showing dialog");
-        var dialog = new hx.widgets.DirDialog(haxe.ui.ToolkitAssets.instance.options.frame, "Pick a directory", this.monkePath.text);
-        dialog.showModal();
-        trace("modal closed?");
-        this.monkePath.text = dialog.path != "" ? dialog.path : this.monkePath.text;
-        dialog.destroy();
+        
+        Dialogs.selectFile(function(button, files) {
+            switch (button) {
+                case DialogButton.CANCEL:
+                    trace("file selection cancelled");
+                case DialogButton.OK:
+                    trace("file(s) selected - " + files.length);
+                    
+            }
+        }, {multiple: false});
     }
  }

@@ -6,7 +6,11 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
+            #if openfl
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../../../"]);
+            #else
             GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../"]);
+            #end
         #else 
             GorillaPath.assetsPath = Path.directory(Sys.programPath());
         #end

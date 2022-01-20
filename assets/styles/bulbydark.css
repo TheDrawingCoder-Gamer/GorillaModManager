@@ -13,13 +13,10 @@ moditem.selected {
 .tabview {
     border: none;
 }
-.textfield {
-    background-color: #3d3d3d;
-    color: orange;
-}
+
 .textfield:disabled {
     background-color: #3f3f3f;
-    color:black;
+    color:#a0a0a0;
 }
 
 .label, .checkbox, .button {
