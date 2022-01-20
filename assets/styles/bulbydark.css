@@ -1,12 +1,42 @@
-.vbox {
+.danger {
+    color: rgb(255, 0, 0);
+}
+
+moditem {
+    background-color: none;
+}
+moditem.selected {
+    background-color: platform-color('highlight');
+    color: platform-color('highlight-text');
+}
+
+.vbox, .tabview {
     background-color: black;
     color: white;
 }
+
 
 .label, .checkbox, .button {
     color: white;
 }
 
-.button {
-    background-color: #111111;
+.textfield {
+    background-color: #3d3d3d;
+    color: orange;
 }
+.textfield:disabled {
+    background-color: #3f3f3f;
+    color:black;
+}
+.button {
+    background-color: #3d3d3d;
+}
+
+.tabview > .tabview-content {
+    border: 1px solid #ABABAB;
+    padding: 5px;
+    background-color: #111111;
+    color: white;
+}
+
+

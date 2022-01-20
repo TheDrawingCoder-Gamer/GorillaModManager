@@ -12,7 +12,7 @@
         <bulby parent="default">
             <style resource="GMM/styles/style.css"/>
         </bulby>
-        <bulbydark parent="bulby">
+        <bulbydark parent="native">
             <style resource="GMM/styles/bulbydark.css"/>
         </bulbydark>
     </themes>
