@@ -1,0 +1,12 @@
+.vbox {
+    background-color: black;
+    color: white;
+}
+
+.label, .checkbox, .button {
+    color: white;
+}
+
+.button {
+    background-color: #111111;
+}

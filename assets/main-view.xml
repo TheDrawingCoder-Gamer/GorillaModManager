@@ -16,9 +16,7 @@
         </vbox>
         <vbox text="Utilities" width="100%" height="100%">
             <button text="Delete ALL Mods" styleNames="danger" width="15%" id="deleteMods"/>
-        </vbox>
-        <vbox text="Configuration" width="100%" height="100%" if="windows">
-            <switch id="darkmode"/>
+            <checkbox text="Dark Mode" id="darkMode" width="15%"/>
         </vbox>
     </tabview>
 </vbox>

@@ -1,5 +1,6 @@
 package;
 
+import haxe.ui.Toolkit;
 import haxe.ui.containers.dialogs.Dialog;
 import haxe.io.Bytes;
 import haxe.ui.core.Screen;
@@ -128,6 +129,14 @@ class MainView extends VBox {
 	private function showModInfo(_:MouseEvent) {
 		if (modlist.selectedItem != null && modlist.selectedItem.mod.git_path != null) {
 			helpers.Util.openURL('https://github.com/${modlist.selectedItem.mod.git_path}');
+		}
+	}
+	@:bind(darkMode, UIEvent.CHANGE)
+	private function changeTheme(_:UIEvent) {
+		if (darkMode.selected) {
+			Toolkit.theme = "bulbydark";
+		} else {
+			Toolkit.theme = "bulby";
 		}
 	}
 	@:bind(deleteMods, MouseEvent.CLICK) 
