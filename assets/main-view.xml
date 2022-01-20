@@ -1,5 +1,4 @@
 <vbox style="padding: 5px;" width="100%" height="100%">
-    <label text="Gorilla Mod Manager"/>
     <dialogtextfield id="monkePathDialog"/>
     <tabview  width="100%" height="100%"> 
         <vbox text="Mods" width="100%" height="100%">
