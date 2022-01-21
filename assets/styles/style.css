@@ -1,4 +1,7 @@
-.danger {
+/*
+    Does haxeui care about specificity?
+*/
+.danger.danger {
     color: red;
     background-color: white;
 }
@@ -10,3 +13,4 @@ moditem.selected {
     background-color: platform-color('highlight');
     color: platform-color('highlight-text');
 }
+

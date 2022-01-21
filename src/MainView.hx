@@ -5,6 +5,7 @@ import haxe.io.Bytes;
 import haxe.ui.core.Screen;
 import haxe.io.BytesInput;
 import haxe.zip.Uncompress;
+import haxe.ui.Toolkit;
 import haxe.ui.containers.VBox;
 import haxe.ui.events.MouseEvent;
 import sys.io.File;
@@ -18,14 +19,12 @@ using StringTools;
 @:build(haxe.ui.ComponentBuilder.build("assets/main-view.xml"))
 class MainView extends VBox {
 	public static var instance:MainView = null;
+	private var requiresUpdate = false;
 	public function new() {
 		super();
 		instance = this;
 		this.monkePathDialog.monkePath.text = GorillaPath.gorillaPath;
-		var mods:Array<ModData> = XmlDeserializer.deserialize();
-        for (mod in mods) {
-            this.modlist.addMod(mod);
-        }
+		modlist.refreshModInfo();
 		modlist.onSelectionChanged = () -> {
 			if (this.modlist.selectedItem == null || this.modlist.selectedItem.mod.git_path == null) {
 				modinfo.disabled = true;
@@ -144,22 +143,24 @@ class MainView extends VBox {
 		if (!success)
 			return;
 		trace("accepted!");
-		deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"]));
+		Util.deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"]));
 	}
-	// https://ashes999.github.io/learnhaxe/recursively-delete-a-directory-in-haxe.html
-	private static function deleteDirRecursively(path:String) : Void
-	{
-		if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path))
-		{
-		var entries = sys.FileSystem.readDirectory(path);
-		for (entry in entries) {
-			if (sys.FileSystem.isDirectory(path + '/' + entry)) {
-			deleteDirRecursively(path + '/' + entry);
-			sys.FileSystem.deleteDirectory(path + '/' + entry);
-			} else {
-			sys.FileSystem.deleteFile(path + '/' + entry);
-			}
-		}
+	#if js
+	@:bind(darkMode, UIEvent.CHANGE)
+	private function changeDarkMode(_:UIEvent) {
+		if (darkMode.selected) {
+			Toolkit.theme = "bulbydark";
+		} else {
+			Toolkit.theme = "bulby";
 		}
 	}
+	#end
+	@:bind(enableBetas, UIEvent.CHANGE) 
+	private function changeEnableBetas(_:UIEvent) {
+		GorillaOptions.enableBetas = enableBetas.selected;
+		// TODO: Lazy update
+		// requiresUpdate = true;
+		modlist.refreshModInfo();
+	}
+	
 }

@@ -2,6 +2,7 @@ package;
 
 import sys.io.File;
 import haxe.io.Path;
+import helpers.Util;
 using Lambda;
 enum SourceKind {
     Url(url:String);
@@ -13,7 +14,7 @@ typedef Group = {
 }
 class XmlDeserializer {
     public static function deserialize() {
-        var file = File.getContent('${GorillaPath.assetsPath}/assets/sources.xml');
+        var file = File.getContent('${GorillaPath.assetsPath}/sources.xml');
         var xml:Xml = Xml.parse(file);
         var mods:Array<ModData> = [];
         var groups:Array<Group> = [];
@@ -22,19 +23,24 @@ class XmlDeserializer {
                 continue;
             switch (element.nodeName) {
                 case "url": 
-                    var urlMods:Array<ModData> = haxe.Json.parse(sys.Http.requestUrl(element.get("name")));
+                    var urlMods:Array<ModData> = haxe.Json.parse(Util.requestUrl(element.get("name")));
+                    trace(urlMods);
                     for (remove in element.elements()) {
                         if (remove.nodeName != "remove" || !isApplicable(remove))
                             continue;
                         urlMods = urlMods.filter((it) -> it.name != remove.get('name'));
                     }
+                    if (!GorillaOptions.enableBetas) {
+                        urlMods = urlMods.filter((it) -> !it.beta);
+                    }
+
                     for (mod in urlMods) {
                         // Overwrite
                         mods = mods.filter((it) -> it.name != mod.name);
                     }
                     mods = mods.concat(urlMods);
                 case "asset": 
-                    var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "assets", element.get('name')])));
+                    var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, element.get('name')])));
                     for (remove in element.elements()) {
                         if (remove.nodeName != "remove" || !isApplicable(remove))
                             continue;
@@ -46,10 +52,10 @@ class XmlDeserializer {
                     }
                     mods = mods.concat(assetMods);
                 case "groupurl": 
-                    groups = groups.concat(haxe.Json.parse(sys.Http.requestUrl(element.get("name"))));
+                    groups = groups.concat(haxe.Json.parse(Util.requestUrl(element.get("name"))));
                     // to do sorting?
                 case "groupasset": 
-                    groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "assets", element.get("name")]))));
+                    groups = groups.concat(haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, element.get("name")]))));
             }
         }
         groups.sort((x, y) -> x.rank - y.rank);

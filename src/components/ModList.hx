@@ -46,6 +46,13 @@ class ModList extends haxe.ui.containers.ScrollView {
     public function mods() {
         return [for (modItem in modItems()) modItem.mod];
     }
+    public function refreshModInfo() {
+        this.groups.removeAllComponents(true);
+        var mods:Array<ModData> = XmlDeserializer.deserialize();
+        for (mod in mods) {
+            this.addMod(mod);
+        }
+    }
     public function updateMods() {
         var modItems = this.modItems();
         for (modItem in modItems) {

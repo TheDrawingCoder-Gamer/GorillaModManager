@@ -11,6 +11,7 @@ typedef ModData = {
     var group:String;
     var ?dependencies:Array<String>;
     var ?install_location:String;
+    var ?beta:Bool;
 }
 
 class ModDataTools {

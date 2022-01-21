@@ -17,7 +17,6 @@ class ModGroup extends haxe.ui.containers.VBox {
         }
         return moditem;
     }
-
     public function clearSelection() {
         for (moditem in this.mods.findComponents(null, ModItem)) {
             moditem.removeClass("selected");

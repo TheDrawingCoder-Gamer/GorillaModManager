@@ -111,15 +111,16 @@ class Util {
             trace("    " + srcUrl);
         }
         
-        var http = new sys.Http(srcUrl);
+        var http = new haxe.Http(srcUrl);
         var httpsFailed:Bool = false;
         var httpStatus:Int = -1;
         http.onStatus = function(status:Int) {
+            var responseHeaders = getHeaders(http.responseData);
             httpStatus = status;
             if (status == 302) { // follow redirects
-                var location = http.responseHeaders.get("location");
+                var location = responseHeaders.get("location");
                 if (location == null) {
-                    location = http.responseHeaders.get("Location");
+                    location = responseHeaders.get("Location");
                 }
                 if (location != null) {
                     nativeDownloadFile(location, dstFile, true);
@@ -146,11 +147,64 @@ class Util {
         }
         http.request();
     }
+    private static function getHeaders(data:String) {
+        var responseHeaders:Map<String, String> = [];
+        var headers = data.split("\r\n");
+        headers.shift();
+        headers.pop();
+        headers.pop();
+
+        var size = null;
+        var chunked = false;
+        for (hline in headers) {
+            var a = hline.split(": ");
+			var hname = a.shift();
+			var hval = if (a.length == 1) a[0] else a.join(": ");
+			hval = StringTools.ltrim(StringTools.rtrim(hval));
+			responseHeaders.set(hname, hval);
+			switch (hname.toLowerCase()) {
+				case "content-length":
+					size = Std.parseInt(hval);
+				case "transfer-encoding":
+					chunked = (hval.toLowerCase() == "chunked");
+			}
+        }
+        return responseHeaders;
+
+    }
+    public static function requestUrl(url:String) {
+        var h = new haxe.Http(url);
+        var r = null;
+        h.onData = function (d) {
+            r = d;
+        }
+        h.onError = function (e) {
+            throw e;
+        }
+        h.request(false);
+        return r;
+    }
     private static function existsCommand(cmd:String) {
         #if windows 
         return Sys.command("WHERE", [cmd]) == 0;
         #else 
         return Sys.command("which", [cmd]) == 0;
         #end
+    }
+    // https://ashes999.github.io/learnhaxe/recursively-delete-a-directory-in-haxe.html
+	public static function deleteDirRecursively(path:String) : Void
+    {
+        if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path))
+        {
+            var entries = sys.FileSystem.readDirectory(path);
+            for (entry in entries) {
+                if (sys.FileSystem.isDirectory(path + '/' + entry)) {
+                    deleteDirRecursively(path + '/' + entry);
+                    sys.FileSystem.deleteDirectory(path + '/' + entry);
+                } else {
+                    sys.FileSystem.deleteFile(path + '/' + entry);
+                }
+            }
+        }
     }
 }

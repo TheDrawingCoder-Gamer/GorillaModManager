@@ -1,6 +1,5 @@
 package components;
 
-import hx.widgets.EventType;
 import haxe.ui.events.MouseEvent;
 @:build(haxe.ui.ComponentBuilder.build("assets/mod-item.xml"))
 @:keep
