@@ -6,9 +6,16 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
+        
             GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../assets"]);
         #else 
-            GorillaPath.assetsPath = Path.directory(Path.join([Sys.programPath(), "assets"]));
+            #if js
+            // Packaged vs. Unpackaged
+            // Debug will never be packaged
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../assets"]);
+            #else
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "assets"]);
+            #end
         #end
         #if windows
             GorillaPath.gorillaPath = "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag";
