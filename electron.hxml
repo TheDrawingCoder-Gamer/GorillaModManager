@@ -16,5 +16,6 @@
 -lib haxeui-html5
 -lib hxnodejs
 -lib tink_core
+-lib tink_await
 
 -js build/electron/Main.js

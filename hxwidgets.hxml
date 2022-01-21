@@ -6,6 +6,7 @@
 -lib haxeui-hxwidgets
 -lib hxWidgets
 -lib tink_core
+-lib tink_await
 
 -D ABI=-MD
 -D WXSTATIC

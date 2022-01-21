@@ -31,9 +31,12 @@ jobs:
         run: |
            haxelib setup ~/haxelib
            haxelib install hxcpp
-           haxelib install haxeui-core
-           haxelib install haxeui-hxwidgets
+           haxelib git haxeui-core https://github.com/haxeui/haxeui-core.git
+           haxelib git haxeui-hxwidgets https://github.com/haxeui/haxeui-hxwidgets.git
            haxelib install hxWidgets
+           haxelib git haxeui-html5 https://github.com/haxeui/haxeui-html5.git
+           haxelib install electron
+           haxelib install hxnodejs
       - name: Install wxWidgets
         run: |
           C:\msys64\usr\bin\wget.exe https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
@@ -43,7 +46,7 @@ jobs:
           nmake.exe -f makefile.vc BUILD=release TARGET_CPU=x64
           nmake.exe -f makefile.vc BUILD=release SHARED=1 TARGET_CPU=x64
           cd ..\..\..
-      - name: Build
+      - name: Build CPP
         shell: powershell
         run: |
           haxe hxwidgets.hxml -D HXCPP_M64
@@ -58,4 +61,20 @@ jobs:
         with: 
           name: windowsBuild
           path: 'build/hxwidgets/'
+      - name: Build Electron
+        shell: powershell
+        run: |
+          haxe electron.hxml
+          cd build/electron
+          npm i --always
+          npx electron-packager . GorillaModManager --out=out --asar
+          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64" -Recurse
+          cd ../..
+      - name: Publish Electron App
+        uses: actions/upload-artifact@v2
+        with: 
+          name: windowsElectron
+          path: 'build/electron/out/GorillaModManager-windows-x64'
+
+
 

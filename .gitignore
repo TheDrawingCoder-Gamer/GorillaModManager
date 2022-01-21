@@ -1,2 +1,6 @@
-build
+build/hxwidgets
+build/electron/app.js
+build/electron/Main.js
 .vscode
+node_modules
+out

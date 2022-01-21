@@ -1,0 +1,16 @@
+{
+    "name": "Main",
+    "version": "0.2.0",
+    "description": "Main",
+    "repository": "https://haxeui.org",
+    "main": "app.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron": "^5.0.2",
+        "electron-packager": "^15.4.0"
+    },
+    "dependencies": {
+    }
+}

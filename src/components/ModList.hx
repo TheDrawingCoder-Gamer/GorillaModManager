@@ -6,7 +6,7 @@ using StringTools;
 using Lambda;
 @:keep
 @:build(haxe.ui.ComponentBuilder.build("assets/mod-list.xml"))
-class ModList extends haxe.ui.containers.ScrollView {
+@await class ModList extends haxe.ui.containers.ScrollView {
     public var selectedItem:ModItem = null;
     public function new() {
         super();
@@ -46,9 +46,9 @@ class ModList extends haxe.ui.containers.ScrollView {
     public function mods() {
         return [for (modItem in modItems()) modItem.mod];
     }
-    public function refreshModInfo() {
+    @await public function refreshModInfo() {
         this.groups.removeAllComponents(true);
-        var mods:Array<ModData> = XmlDeserializer.deserialize();
+        var mods:Array<ModData> = @await XmlDeserializer.deserialize();
         for (mod in mods) {
             this.addMod(mod);
         }

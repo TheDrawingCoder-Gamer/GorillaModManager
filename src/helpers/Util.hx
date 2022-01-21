@@ -1,5 +1,8 @@
 package helpers;
 
+import tink.core.Promise;
+import tink.core.Future;
+import tink.core.Outcome;
 import sys.FileSystem;
 import haxe.io.Path;
 import sys.io.File;
@@ -17,7 +20,7 @@ enum Unzipper {
     UZHaxe;
     UZUnknown;
 }
-class Util {
+@await class Util {
     public static var fetcher:FileFetcher = FFUnknown;
     public static var unzipper:Unzipper = UZUnknown;
     public static function openURL(url:String) {
@@ -172,17 +175,18 @@ class Util {
         return responseHeaders;
 
     }
-    public static function requestUrl(url:String) {
-        var h = new haxe.Http(url);
-        var r = null;
-        h.onData = function (d) {
-            r = d;
-        }
-        h.onError = function (e) {
-            throw e;
-        }
-        h.request(false);
-        return r;
+    public static function requestUrl(url:String):Promise<String> {
+        return cast Future.irreversible((cb) -> {
+            var h = new haxe.Http(url);
+            var r = null;
+            h.onData = function (d) {
+                cb(Success(d));
+            }
+            h.onError = function (e) {
+                cb(Failure(e));
+            }
+            h.request(false);
+        });
     }
     private static function existsCommand(cmd:String) {
         #if windows 

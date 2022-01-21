@@ -34,10 +34,10 @@ jobs:
           run: |
             haxelib setup ~/haxelib
             haxelib install hxcpp > /dev/null
-            haxelib install haxeui-core
-            haxelib install haxeui-hxwidgets
+            haxelib git haxeui-core https://github.com/haxeui/haxeui-core.git
+            haxelib git haxeui-hxwidgets https://github.com/haxeui/haxeui-hxwidgets.git
             haxelib install hxWidgets
-        - name: Setup app (haxe ${{ matrix.haxe-version }}, ${{ matrix.os }})
+        - name: Setup App
           env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           run: |
