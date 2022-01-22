@@ -72,7 +72,7 @@ jobs:
         
           cd build/electron
           npm i --production=false
-          npx electron-packager . GorillaModManager --out=out --asar
+          npx electron-packager . GorillaModManager --out=out --asar --arch=x64
           cd ../..
           Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64/assets" -Recurse
       - name: Publish Electron App
