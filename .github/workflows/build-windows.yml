@@ -74,7 +74,7 @@ jobs:
           npm i --production=false
           npx electron-packager . GorillaModManager --out=out --asar
           cd ../..
-          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64" -Recurse
+          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64/assets" -Recurse
       - name: Publish Electron App
         uses: actions/upload-artifact@v2
         with: 

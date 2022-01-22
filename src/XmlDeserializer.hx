@@ -21,46 +21,36 @@ typedef Group = {
     var name:String;
     var rank:Int;
 }
-@await class XmlDeserializer {
-    public static function deserialize():Promise<Array<ModData>> {
-        return cast Future.irreversible((cb) -> {
-            var file = File.getContent('${GorillaPath.assetsPath}/sources.xml');
-            var xml:Xml = Xml.parse(file);
-            var mods:Array<ModData> = [];
-            var groups:Array<Group> = [];
-            var promises = Promise.inSequence([for (element in xml.firstElement().elements()) processNode(element)]);
-            promises.handle((d) -> {
-                switch (d) {
-                    case Success(data):
-                        for (nodedata in data) {
-                            switch (nodedata) {
-                                case Mods(nodeMods):
-                                    for (mod in nodeMods) {
-                                        // Overwrite
-                                        mods = mods.filter((it) -> it.name != mod.name);
-                                    }
-                                    mods = mods.concat(nodeMods);
-                                case Groups(nodeGroups):
-                                    groups = groups.concat(nodeGroups);
-                                case NDNone:
-                            }
-                        }
-                        groups.sort((x, y) -> x.rank - y.rank);
-                        var groupsData:Array<{name:String, mods:Array<ModData>}> = [];
-                        for (group in groups) {
-                            var goodMods = mods.filter((it) -> it.group == group.name);
-                            mods = mods.filter((it) -> it.group != group.name);
-                            groupsData.push({name: group.name, mods: goodMods});
-                        }
-                        groupsData.push({name: "GMM::Unknown", mods: mods});
-                        
-                        cb(Success(groupsData.flatMap((it) -> it.mods)));
-                    case Failure(failure):
-                        cb(Failure(failure));
-                }
-            });
-            
-        });
+@:await class XmlDeserializer {
+    @:async public static function deserialize():Array<ModData> {
+        var file = File.getContent('${GorillaPath.assetsPath}/sources.xml');
+        var xml:Xml = Xml.parse(file);
+        var mods:Array<ModData> = [];
+        var groups:Array<Group> = [];
+        var data = @:await Promise.inSequence([for (element in xml.firstElement().elements()) processNode(element)]);
+        for (nodedata in data) {
+            switch (nodedata) {
+                case Mods(nodeMods):
+                    for (mod in nodeMods) {
+                        // Overwrite
+                        mods = mods.filter((it) -> it.name != mod.name);
+                    }
+                    mods = mods.concat(nodeMods);
+                case Groups(nodeGroups):
+                    groups = groups.concat(nodeGroups);
+                case NDNone:
+            }
+        }
+        groups.sort((x, y) -> x.rank - y.rank);
+        var groupsData:Array<{name:String, mods:Array<ModData>}> = [];
+        for (group in groups) {
+            var goodMods = mods.filter((it) -> it.group == group.name);
+            mods = mods.filter((it) -> it.group != group.name);
+            groupsData.push({name: group.name, mods: goodMods});
+        }
+        groupsData.push({name: "GMM::Unknown", mods: mods});
+
+        return groupsData.flatMap((it) -> it.mods);
         
     }
     private static function isApplicable(element:Xml) {
@@ -98,10 +88,10 @@ typedef Group = {
         }
         return true;
     }
-    @async private static function processNode(node:Xml):NodeData {
+    @:async private static function processNode(node:Xml):NodeData {
         switch (node.nodeName) {
             case "url": 
-                var data:String = @await Util.requestUrl(node.get("name"));
+                var data:String = @:await Util.requestUrl(node.get("name"));
                 var urlMods:Array<ModData> = haxe.Json.parse(data);
                 for (remove in node.elementsNamed("remove")) {
                     if (!isApplicable(remove))
@@ -123,7 +113,7 @@ typedef Group = {
                 return Mods(assetMods);
 
             case "groupurl":
-                var data = @await Util.requestUrl(node.get("name"));
+                var data = @:await Util.requestUrl(node.get("name"));
                 var groups:Array<Group> = haxe.Json.parse(data);
                 return Groups(groups);
 
@@ -134,22 +124,5 @@ typedef Group = {
                 return NDNone;
         }
         
-    }
-    private static function modsOfElement(element:Xml) {
-        var sources = [];
-        for (child in element.elements()) {
-            if (!isApplicable(child))
-                continue;
-            trace(child.nodeName);
-            switch (child.nodeName) {
-                case "url": 
-                    sources.push(Url(child.get("name")));
-                case "asset": 
-                    sources.push(Asset(child.get("name")));
-                default: 
-                    trace("WARNING: INVALID XML! Ignoring  :)");
-            }
-        }
-        return sources;
     }
 }
