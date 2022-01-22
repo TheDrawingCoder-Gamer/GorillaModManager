@@ -1,6 +1,3 @@
---cmd npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
---next
-
 -lib electron
 
 -cp src

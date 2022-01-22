@@ -53,8 +53,6 @@ jobs:
       - name: Build CPP
         shell: powershell
         run: |
-          npm i --always
-          npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
           haxe hxwidgets.hxml -D HXCPP_M64
           Copy-Item -Path "assets" -Destination "build/hxwidgets" -Recurse
           Remove-Item build/hxwidgets/include -Recurse -Force
@@ -70,7 +68,6 @@ jobs:
       - name: Build Electron
         shell: powershell
         run: |
-          npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
           haxe electron.hxml
         
           cd build/electron

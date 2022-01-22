@@ -4,4 +4,3 @@ build/electron/Main.js
 .vscode
 node_modules
 out
-assets/styles/bulbydark.css
