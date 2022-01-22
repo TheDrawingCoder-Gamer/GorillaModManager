@@ -21,7 +21,7 @@ typedef Group = {
     var name:String;
     var rank:Int;
 }
-class XmlDeserializer {
+@await class XmlDeserializer {
     public static function deserialize():Promise<Array<ModData>> {
         return cast Future.irreversible((cb) -> {
             var file = File.getContent('${GorillaPath.assetsPath}/sources.xml');
@@ -98,63 +98,42 @@ class XmlDeserializer {
         }
         return true;
     }
-    private static function processNode(node:Xml):Promise<NodeData> {
-        return cast Future.irreversible((cb) -> {
-            switch (node.nodeName) {
-                case "url": 
-                    Util.requestUrl(node.get("name")).handle((d) -> {
-                        switch (d) {
-                            case Success(data):
-                                var urlMods:Array<ModData> = haxe.Json.parse(data);
-                                for (remove in node.elementsNamed("remove")) {
-                                    if (!isApplicable(remove))
-                                        continue;
-                                    urlMods = urlMods.filter((it) -> it.name != remove.get("name"));
-                                }
-                                if (!GorillaOptions.enableBetas) 
-                                    urlMods = urlMods.filter(it -> !it.beta);
-                                cb(Success(Mods(urlMods)));
-                                
-                            case Failure(e ):
-                                cb(Failure(e));
-                        }
-                    });
-                case "asset": 
-                    try {
-                        var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, node.get("name")])));
-                        for (remove in node.elementsNamed("remove")) {
-                            if (!isApplicable(remove))
-                                continue;
-                            assetMods = assetMods.filter((it) -> it.name != remove.get("name"));
-                        }
-                        if (!GorillaOptions.enableBetas) 
-                            assetMods = assetMods.filter(it -> !it.beta);
-                        cb(Success(Mods(assetMods)));
-                    } catch (e) {
-                        cb(Failure(Error.asError(e)));
-                    }
-                case "groupurl":
-                    Util.requestUrl(node.get("name")).handle((d) -> {
-                        switch (d) {
-                            case Success(data):
-                                var groups:Array<Group> = haxe.Json.parse(data);
-                                cb(Success(Groups(groups)));
-                                
-                            case Failure(e ):
-                                cb(Failure(e));
-                        }
-                    });
-                case "groupasset": 
-                    try {
-                        var groups:Array<Group> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, node.get("name")])));
-                        cb(Success(Groups(groups)));
-                    } catch (e) {
-                        cb(Failure(Error.asError(e)));
-                    }
-                default: 
-                    cb(Success(NDNone));
-            }
-        });
+    @async private static function processNode(node:Xml):NodeData {
+        switch (node.nodeName) {
+            case "url": 
+                var data:String = @await Util.requestUrl(node.get("name"));
+                var urlMods:Array<ModData> = haxe.Json.parse(data);
+                for (remove in node.elementsNamed("remove")) {
+                    if (!isApplicable(remove))
+                        continue;
+                    urlMods = urlMods.filter((it) -> it.name != remove.get("name"));
+                }
+                if (!GorillaOptions.enableBetas) 
+                    urlMods = urlMods.filter(it -> !it.beta);
+                return Mods(urlMods);
+            case "asset": 
+                var assetMods:Array<ModData> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, node.get("name")])));
+                for (remove in node.elementsNamed("remove")) {
+                    if (!isApplicable(remove))
+                        continue;
+                    assetMods = assetMods.filter((it) -> it.name != remove.get("name"));
+                }
+                if (!GorillaOptions.enableBetas) 
+                    assetMods = assetMods.filter(it -> !it.beta);
+                return Mods(assetMods);
+
+            case "groupurl":
+                var data = @await Util.requestUrl(node.get("name"));
+                var groups:Array<Group> = haxe.Json.parse(data);
+                return Groups(groups);
+
+            case "groupasset": 
+                var groups:Array<Group> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, node.get("name")])));
+                return Groups(groups);
+            default: 
+                return NDNone;
+        }
+        
     }
     private static function modsOfElement(element:Xml) {
         var sources = [];

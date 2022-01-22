@@ -151,7 +151,7 @@ class MainView extends VBox {
 		if (darkMode.selected) {
 			Toolkit.theme = "bulbydark";
 		} else {
-			Toolkit.theme = "bulby";
+			Toolkit.theme = "bulbyelectron";
 		}
 	}
 	#end

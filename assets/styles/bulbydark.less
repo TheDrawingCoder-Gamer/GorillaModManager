@@ -1,25 +1,32 @@
+@textcolor: white;
+@backgroundcolor: #3d3d3d;
+@backgroundcolordark: #2a2a2a;
 .vbox, .tabview {
-    background-color: black;
-    color: white;
+    background-color: @backgroundcolordark;
+    color: @textcolor;
 }
 .textfield:disabled {
-    background-color: #3f3f3f;
-    color:white;
+    background-color: @backgroundcolor;
+    color:@textcolor;
 }
 
 .label, .checkbox, .button {
-    color: white;
+    color: @textcolor;
 }
 
 
 .button {
-    background-color: #3d3d3d;
+    background-color: @backgroundcolor;
 }
 
 .tabview > .tabview-content {
     border: 1px solid #ABABAB;
     padding: 5px;
-    background-color: #111111;
-    color: white;
+    background-color: @backgroundcolordark;
+    color: @textcolor;
 }
 
+.moditem.selected {
+    background-color: rgb(31, 169, 255);
+    color: @textcolor;
+}

@@ -15,5 +15,8 @@
         <bulbydark parent="bulby">
             <style resource="GMM/styles/bulbydark.css"/>
         </bulbydark>
+        <bulbyelectron parent="bulby">
+            <style resource="GMM/styles/electron.css"/>
+        </bulbyelectron>
     </themes>
 </module>

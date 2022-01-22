@@ -1,0 +1,8 @@
+.moditem {
+    color: black;
+}
+
+.moditem.selected {
+    background-color: rgb(159, 217, 253);
+    color: white;
+}

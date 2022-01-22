@@ -1,3 +1,5 @@
+--cmd npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
+--next
 -cp src
 -main Main
 
@@ -5,10 +7,10 @@
 -lib haxeui-core
 -lib haxeui-hxwidgets
 -lib hxWidgets
--lib tink_core
--lib tink_await
+libs.hxml
 
 -D ABI=-MD
 -D WXSTATIC
+-D hxwidgets
 
 -cpp build/hxwidgets

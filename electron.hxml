@@ -1,3 +1,6 @@
+--cmd npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
+--next
+
 -lib electron
 
 -cp src
@@ -15,7 +18,8 @@
 -lib haxeui-core
 -lib haxeui-html5
 -lib hxnodejs
--lib tink_core
--lib tink_await
+libs.hxml
+
+-D electron
 
 -js build/electron/Main.js
