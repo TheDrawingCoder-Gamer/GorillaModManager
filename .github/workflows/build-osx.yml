@@ -57,6 +57,7 @@ jobs:
             cd ..
         - name: Build
           run: |
+            ls
             npm i --always
             npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
             haxe hxwidgets.hxml

@@ -63,6 +63,7 @@ jobs:
           ./configure --with-gtk --disable-shared > log.txt
           sudo make
           sudo make install
+          cd ..
       - name: Build
         run: |
           npm i --always
