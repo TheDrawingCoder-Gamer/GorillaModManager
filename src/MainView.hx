@@ -33,6 +33,11 @@ class MainView extends VBox {
 	
 			}
 		};
+		#if js
+		darkMode.selected = GorillaOptions.darkMode;
+		updateTheme();
+		#end
+		enableBetas.selected = GorillaOptions.enableBetas;
 	}
 	@:bind(installMods, MouseEvent.CLICK)
 	public function doInstallMods(e:MouseEvent) {
@@ -148,12 +153,17 @@ class MainView extends VBox {
 	#if js
 	@:bind(darkMode, UIEvent.CHANGE)
 	private function changeDarkMode(_:UIEvent) {
-		if (darkMode.selected) {
+		GorillaOptions.darkMode = darkMode.selected;
+		updateTheme();
+	}
+	
+	private function updateTheme() {
+		if (GorillaOptions.darkMode) {
 			Toolkit.theme = "bulbydark";
 		} else {
 			Toolkit.theme = "bulbyelectron";
 		}
-	}
+	} 
 	#end
 	@:bind(enableBetas, UIEvent.CHANGE) 
 	private function changeEnableBetas(_:UIEvent) {
