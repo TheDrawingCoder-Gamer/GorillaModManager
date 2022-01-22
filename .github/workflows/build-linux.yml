@@ -61,6 +61,8 @@ jobs:
           sudo make install
       - name: Build
         run: |
+          npm i --always
+          npx lessc assets/styles/bulbydark.less assets/styles/bulbydark.css
           haxe hxwidgets.hxml
           cp -R assets build/hxwidgets/
           rm -rf build/hxwidgets/include
