@@ -71,7 +71,7 @@ jobs:
           haxe electron.hxml
         
           cd build/electron
-          npm i --always
+          npm i --production=false
           npx electron-packager . GorillaModManager --out=out --asar
           cd ../..
           Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64" -Recurse
