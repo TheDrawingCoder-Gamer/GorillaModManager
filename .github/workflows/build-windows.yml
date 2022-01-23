@@ -76,12 +76,12 @@ jobs:
           ls
           ls out
           cd ../..
-          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-windows-x64/assets" -Recurse
+          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-win32-x64/assets" -Recurse
       - name: Publish Electron App
         uses: actions/upload-artifact@v2
         with: 
           name: windowsElectron
-          path: 'build/electron/out/GorillaModManager-windows-x64'
+          path: 'build/electron/out/GorillaModManager-win32-x64'
 
 
 

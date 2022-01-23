@@ -8,10 +8,7 @@ import sys.io.File;
 import haxe.io.Path;
 import helpers.Util;
 using Lambda;
-enum SourceKind {
-    Url(url:String);
-    Asset(name:String);
-}
+
 enum NodeData {
     Mods(mods:Array<ModData>);
     Groups(groups:Array<Group>);
