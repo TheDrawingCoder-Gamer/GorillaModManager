@@ -5,3 +5,4 @@ build/electron/Main.js
 node_modules
 out
 dump
+assets/options.json
