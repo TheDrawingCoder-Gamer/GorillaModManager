@@ -111,41 +111,53 @@ enum Unzipper {
         }
     }
 	// https://github.com/ianharrigan/hvm/blob/main/hvm/HVM.hx#L822-L861
-	private static function nativeDownloadFile(srcUrl:String, dstFile:String, isRedirect:Bool = false):Promise<Noise> {
+	private static function nativeDownloadFile(srcUrl:String, dstFile:String):Promise<Noise> {
         return Future.irreversible((cb) -> {
-            if (isRedirect == false) {
-                trace("    " + srcUrl);
-            }
+            trace("    " + srcUrl);
             
-            var http = new haxe.Http(srcUrl);
+            var http = #if nodejs new helpers.Http(srcUrl) #else new haxe.Http(srcUrl) #end;
             var httpsFailed:Bool = false;
             var httpStatus:Int = -1;
             http.onStatus = function(status:Int) {
-                trace(http.responseBytes);
-                var responseHeaders = #if sys http.responseHeaders #else getHeaders(http.responseData) #end;
                 httpStatus = status;
+                
+
                 if (status == 302) { // follow redirects
-                    var location = responseHeaders.get("location");
+                    var location = http.responseHeaders.get("location");
                     if (location == null) {
-                        location = responseHeaders.get("Location");
+                        location = http.responseHeaders.get("Location");
                     }
                     if (location != null) {
-                        nativeDownloadFile(location, dstFile, true).handle((d) -> {
+                        nativeDownloadFile(location, dstFile).handle((d) -> {
+                            trace(d);
                             cb(d);
                         });
+                        return;
                     } else {
-                        throw "302 (redirect) encountered but no 'location' header found";
+                        cb(Failure(Error.asError("302 (redirect) encountered but no 'location' header found")));
+                        return;
                     }
                 }
             }
             http.onBytes = function(bytes:Bytes) {
+                trace(httpStatus);
                 if (httpStatus == 200) {
                     trace("    Download complete");
-                    File.saveBytes(dstFile, bytes);
+                    try {
+                        trace(FileSystem.exists(Path.directory(dstFile)));
+                        File.saveBytes(dstFile, bytes);
+                    } catch (e) {
+                        cb(Failure(Error.asError(e)));
+                        return;
+                    }
+                   
                     cb(Success(null));
+                    return;
                 }
+                
             }
             http.onError = function(error) {
+                trace(httpStatus);
                 if (!httpsFailed && srcUrl.indexOf("https:") > -1) {
                     httpsFailed = true;
                     trace("Problem downloading file using http secure: " + error);
@@ -153,11 +165,19 @@ enum Unzipper {
                     nativeDownloadFile( StringTools.replace(srcUrl, "https", "http"), dstFile).handle((d) -> {
                         cb(d);
                     });
+                    return;
                 } else {
+                    trace(":frown:");
                     cb(Failure(Error.asError("    Problem downloading file: " + error)));
                 }
             }
-            http.request();
+            try {
+                http.request();
+            } catch (e) {
+                trace(e); 
+                cb(Failure(Error.asError(e)));
+            }
+            
         });
         
     }
