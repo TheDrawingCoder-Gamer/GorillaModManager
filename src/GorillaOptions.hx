@@ -7,19 +7,22 @@ import sys.FileSystem;
 typedef GorillaOptionData = {
     var enableBetas:Bool;
     var darkMode:Bool;
+    var path:String;
 };
 class GorillaOptions {
-    private static var cache:GorillaOptionData = { enableBetas: false, darkMode: false};
+    private static var cache:GorillaOptionData = null;
     private static var updatedCache = false;
     public static var enableBetas(get, set):Bool;
     public static var darkMode(get, set):Bool;
+    public static var path(get, set):String;
     private static function updateCache() {
         if (FileSystem.exists(Path.join([GorillaPath.assetsPath, "options.json"]))) {
             cache = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, "options.json"])));
         } else {
             cache = {
                 enableBetas : false,
-                darkMode: false
+                darkMode: false,
+                path: #if windows "C:\\Program Files\\Steam\\steamapps\\common\\Gorilla Tag"  #else Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]) #end
             };
         }
         updatedCache = true;
@@ -47,6 +50,16 @@ class GorillaOptions {
     }
     public static function set_darkMode(value:Bool) {
         cache.darkMode = value;
+        flush();
+        return value;
+    }
+    public static function get_path() {
+        if (!updatedCache)
+            updateCache();
+        return cache.path;
+    }
+    public static function set_path(value:String) {
+        cache.path = value;
         flush();
         return value;
     }

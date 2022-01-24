@@ -1,5 +1,6 @@
 package;
 
+import tink.core.Future;
 import haxe.ui.containers.dialogs.Dialog;
 import haxe.io.Bytes;
 import haxe.ui.core.Screen;
@@ -14,12 +15,14 @@ using haxe.io.Path;
 import haxe.ui.events.UIEvent;
 import haxe.ui.containers.dialogs.Dialogs;
 import helpers.Util;
+import tink.core.Promise;
 using StringTools;
 
 @:build(haxe.ui.ComponentBuilder.build("assets/main-view.xml"))
-class MainView extends VBox {
+@:await class MainView extends VBox {
 	public static var instance:MainView = null;
 	private var requiresUpdate = false;
+	private var inProgress = false;
 	public function new() {
 		super();
 		instance = this;
@@ -40,12 +43,14 @@ class MainView extends VBox {
 		enableBetas.selected = GorillaOptions.enableBetas;
 	}
 	@:bind(installMods, MouseEvent.CLICK)
-	public function doInstallMods(e:MouseEvent) {
+	@:await public function doInstallMods(e:MouseEvent) {
+		if (inProgress) return;
+		inProgress = true;
 		var goodMods = [];
 		try {
 			for (modItem in this.modlist.modItems()) {
 				if (modItem.enabled.selected && (!VersionSaver.isLatestVersion(modItem.mod) || this.overwrite.selected))
-					if (!doInstallMod(modItem.mod)) {
+					if (!@:await doInstallMod(modItem.mod)) {
 						trace("Failed to install mod: " + modItem.mod.name);
 					} else {
 						goodMods.push(modItem.mod);
@@ -55,31 +60,20 @@ class MainView extends VBox {
 			trace(e);
 		}
 		VersionSaver.serialize(goodMods);
+		inProgress = false;
 		
 	}
-	public function doInstallMod(mod:ModData):Bool {
+	public function doInstallMod(mod:ModData):Promise<Bool> {
 		if (mod.download_url.startsWith("internal-runner:")) {
 			var runner = mod.download_url.substr(16);
 			switch (runner) {
 				case "linux-bepinex":
 					// Basically do what fixed my issues on Endeavour
 					// 1. Install normal bepinex
-					if (!doInstallMod({
-						"name": "BepInEx",
-						"author": "BepInEx Team",
-						"version": "5.4.18",
-						"group": "Core",
-						"download_url": "https://github.com/BepInEx/BepInEx/releases/download/v5.4.18/BepInEx_x64_5.4.18.0.zip"
-					  }))
-					  return false;
+					downloadAndUnpack("https://github.com/BepInEx/BepInEx/releases/download/v5.4.18/BepInEx_x64_5.4.18.0.zip").eager();
 					// 2. Download and overwrite with the magic files
-					try {
-						downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7323852/winhttp.zip');
-						downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7357827/bepin4.zip');
-					} catch (e) {
-						trace(e);
-						return false;
-					}
+					downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7323852/winhttp.zip').eager();
+					downloadAndUnpack('https://github.com/BepInEx/BepInEx/files/7357827/bepin4.zip').eager();
 					
 					return true;
 				case "wine-config": 
@@ -101,26 +95,31 @@ class MainView extends VBox {
 					return false;
 			}
 		} else {
-			try {
-				downloadAndUnpack(mod.download_url, mod.install_location);
-			} catch (e) {
-				trace(e);
-				return false;
-			}
-			return true;
+			return downloadAndUnpack(mod.download_url, mod.install_location);
 		}
 		return false;
 		
 	} 
-	private static function downloadAndUnpack(url:String, install_location:String = ".") {
-		download(url, Path.join([GorillaPath.gorillaPath, install_location]));
-		Util.unzipFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
-		FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
+	private static function downloadAndUnpack(url:String, install_location:String = "."):Promise<Bool> {
+		return Future.irreversible((cb) -> {
+			Util.downloadAndSave(url, Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()])).handle((d) -> {
+					switch (d) {
+						case Success(data): 
+							Util.unzipFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
+							FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
+							cb(true);
+						case Failure(e): 
+							cb(false);
+					}
+				}); 
+		});
+		
 	}
 	private static function download(url:String, ?installPath:String = null) {
 		if (installPath == null)
 			installPath = GorillaPath.gorillaPath;
-		Util.downloadAndSave(url, Path.join([installPath, url.withoutDirectory()]));
+		trace("download " + url);
+		return Util.downloadAndSave(url, Path.join([installPath, url.withoutDirectory()]));
 		
 	}
 	

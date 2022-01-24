@@ -54,6 +54,7 @@ using Lambda;
         }
     }
     public function updateMods() {
+        trace("update");
         var modItems = this.modItems();
         for (modItem in modItems) {
             modItem.enabled.disabled = false;

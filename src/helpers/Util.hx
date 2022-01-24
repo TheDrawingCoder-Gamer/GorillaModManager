@@ -1,5 +1,7 @@
 package helpers;
 
+import tink.core.Error;
+import tink.core.Noise;
 import tink.core.Promise;
 import tink.core.Future;
 import tink.core.Outcome;
@@ -21,8 +23,8 @@ enum Unzipper {
     UZUnknown;
 }
 @await class Util {
-    public static var fetcher:FileFetcher = FFUnknown;
-    public static var unzipper:Unzipper = UZUnknown;
+    public static var fetcher:FileFetcher = #if disable_command_dl FFHaxe #else FFUnknown #end;
+    public static var unzipper:Unzipper = #if disable_command_unzip UZHaxe #else UZUnknown #end;
     public static function openURL(url:String) {
         #if windows
             Sys.command("start", [url]);
@@ -80,7 +82,7 @@ enum Unzipper {
 		}
 		
 	}
-    public static function downloadAndSave(url:String, dest:String) {
+    @:async public static function downloadAndSave(url:String, dest:String) {
         switch (fetcher) {
             case FFUnknown: 
                 if (existsCommand("wget"))
@@ -98,7 +100,7 @@ enum Unzipper {
                 return Sys.command("curl", ["-L", "-o", dest, url]) == 0;
             case FFHaxe: 
                 try {
-                    nativeDownloadFile(url, dest);
+                    @:await nativeDownloadFile(url, dest);
                     return true;
                 } catch (e) {
                     trace(e);
@@ -108,50 +110,61 @@ enum Unzipper {
                 return false;
         }
     }
-    // https://github.com/ianharrigan/hvm/blob/main/hvm/HVM.hx#L822-L861
-	private static function nativeDownloadFile(srcUrl:String, dstFile:String, isRedirect:Bool = false) {
-        if (isRedirect == false) {
-            trace("    " + srcUrl);
-        }
-        
-        var http = new haxe.Http(srcUrl);
-        var httpsFailed:Bool = false;
-        var httpStatus:Int = -1;
-        http.onStatus = function(status:Int) {
-            var responseHeaders = getHeaders(http.responseData);
-            httpStatus = status;
-            if (status == 302) { // follow redirects
-                var location = responseHeaders.get("location");
-                if (location == null) {
-                    location = responseHeaders.get("Location");
+	// https://github.com/ianharrigan/hvm/blob/main/hvm/HVM.hx#L822-L861
+	private static function nativeDownloadFile(srcUrl:String, dstFile:String, isRedirect:Bool = false):Promise<Noise> {
+        return Future.irreversible((cb) -> {
+            if (isRedirect == false) {
+                trace("    " + srcUrl);
+            }
+            
+            var http = new haxe.Http(srcUrl);
+            var httpsFailed:Bool = false;
+            var httpStatus:Int = -1;
+            http.onStatus = function(status:Int) {
+                trace(http.responseBytes);
+                var responseHeaders = #if sys http.responseHeaders #else getHeaders(http.responseData) #end;
+                httpStatus = status;
+                if (status == 302) { // follow redirects
+                    var location = responseHeaders.get("location");
+                    if (location == null) {
+                        location = responseHeaders.get("Location");
+                    }
+                    if (location != null) {
+                        nativeDownloadFile(location, dstFile, true).handle((d) -> {
+                            cb(d);
+                        });
+                    } else {
+                        throw "302 (redirect) encountered but no 'location' header found";
+                    }
                 }
-                if (location != null) {
-                    nativeDownloadFile(location, dstFile, true);
+            }
+            http.onBytes = function(bytes:Bytes) {
+                if (httpStatus == 200) {
+                    trace("    Download complete");
+                    File.saveBytes(dstFile, bytes);
+                    cb(Success(null));
+                }
+            }
+            http.onError = function(error) {
+                if (!httpsFailed && srcUrl.indexOf("https:") > -1) {
+                    httpsFailed = true;
+                    trace("Problem downloading file using http secure: " + error);
+                    trace("Trying again with http insecure...");
+                    nativeDownloadFile( StringTools.replace(srcUrl, "https", "http"), dstFile).handle((d) -> {
+                        cb(d);
+                    });
                 } else {
-                    throw "302 (redirect) encountered but no 'location' header found";
+                    cb(Failure(Error.asError("    Problem downloading file: " + error)));
                 }
             }
-        }
-        http.onBytes = function(bytes:Bytes) {
-            if (httpStatus == 200) {
-                trace("    Download complete");
-                File.saveBytes(dstFile, bytes);
-            }
-        }
-        http.onError = function(error) {
-            if (!httpsFailed && srcUrl.indexOf("https:") > -1) {
-                httpsFailed = true;
-                trace("Problem downloading file using http secure: " + error);
-                trace("Trying again with http insecure...");
-                nativeDownloadFile( StringTools.replace(srcUrl, "https", "http"), dstFile);
-            } else {
-                throw "    Problem downloading file: " + error;
-            }
-        }
-        http.request();
+            http.request();
+        });
+        
     }
     private static function getHeaders(data:String) {
+    
         var responseHeaders:Map<String, String> = [];
+        trace(data);
         var headers = data.split("\r\n");
         headers.shift();
         headers.pop();
@@ -178,7 +191,7 @@ enum Unzipper {
     public static function requestUrl(url:String):Promise<String> {
         return cast Future.irreversible((cb) -> {
             var h = new haxe.Http(url);
-            var r = null;
+
             h.onData = function (d) {
                 cb(Success(d));
             }
