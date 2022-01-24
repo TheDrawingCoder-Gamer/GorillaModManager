@@ -6,8 +6,11 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
-        
+            #if heaps 
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../../assets"]);
+            #else
             GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../assets"]);
+            #end
         #else 
             #if js
             // Packaged vs. Unpackaged
@@ -18,7 +21,7 @@ class Main {
             #end
         #end
         
-        #if sys
+        #if hxwidgets
         Toolkit.theme = "bulby";
         #else
         Toolkit.theme = "bulbyelectron";

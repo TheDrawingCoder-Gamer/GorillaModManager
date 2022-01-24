@@ -1,4 +1,5 @@
 build/hxwidgets
+build/heaps
 build/electron/app.js
 build/electron/Main.js
 .vscode

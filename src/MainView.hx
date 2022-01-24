@@ -36,7 +36,7 @@ using StringTools;
 	
 			}
 		};
-		#if js
+		#if !hxwidgets
 		darkMode.selected = GorillaOptions.darkMode;
 		updateTheme();
 		#end
@@ -149,7 +149,7 @@ using StringTools;
 		trace("accepted!");
 		Util.deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"]));
 	}
-	#if js
+	#if !hxwidgets
 	@:bind(darkMode, UIEvent.CHANGE)
 	private function changeDarkMode(_:UIEvent) {
 		GorillaOptions.darkMode = darkMode.selected;
