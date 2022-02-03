@@ -10,13 +10,13 @@
     </resources>
     <themes>
         <bulby parent="default">
-            <style resource="GMM/styles/style.css"/>
+            <style resource="GMM/styles/bulby.css"/>
         </bulby>
         <bulbydark parent="bulby">
             <style resource="GMM/styles/bulbydark.css"/>
         </bulbydark>
         <bulbyelectron parent="bulby">
-            <style resource="GMM/styles/electron.css"/>
+            <style resource="GMM/styles/bulbylight.css"/>
         </bulbyelectron>
     </themes>
 </module>

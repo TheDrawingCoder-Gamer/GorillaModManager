@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.ArraySort;
 import tink.core.Error;
 import tink.core.Future;
 import tink.core.Promise;
@@ -46,6 +47,8 @@ typedef Group = {
                         for (group in groups) {
                             var goodMods = mods.filter((it) -> it.group == group.name);
                             mods = mods.filter((it) -> it.group != group.name);
+                            // stable sort because sanity
+                            ArraySort.sort(goodMods, (x, y) -> x.name.charCodeAt(0) - y.name.charCodeAt(0));
                             groupsData.push({name: group.name, mods: goodMods});
                         }
                         groupsData.push({name: "GMM::Unknown", mods: mods});

@@ -116,6 +116,8 @@ enum Unzipper {
             trace("    " + srcUrl);
             
             var http = #if nodejs new helpers.Http(srcUrl) #else new haxe.Http(srcUrl) #end;
+            http.addHeader("pragma", "no-cache");
+            http.addHeader("cache-control", "no-cahce");
             var httpsFailed:Bool = false;
             var httpStatus:Int = -1;
             http.onStatus = function(status:Int) {

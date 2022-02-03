@@ -6,7 +6,9 @@ import haxe.io.Path;
 class Main {
     public static function main() {
         #if DEBUG
-            #if heaps 
+            #if openfl 
+            GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../../../assets"]);
+            #elseif heaps 
             GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../../assets"]);
             #else
             GorillaPath.assetsPath = Path.join([Sys.programPath(), "../../../assets"]);

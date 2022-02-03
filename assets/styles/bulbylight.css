@@ -1,3 +1,7 @@
+.mainview {
+    background-color: #fff3e1;
+}
+
 .tabview, .modlist {
     background-color: #ffebcd;
 }
