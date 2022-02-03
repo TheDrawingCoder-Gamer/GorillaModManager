@@ -1,5 +1,6 @@
 package;
 
+import tink.core.Future;
 import haxe.ui.containers.dialogs.Dialog;
 import haxe.io.Bytes;
 import haxe.ui.core.Screen;
@@ -14,12 +15,14 @@ using haxe.io.Path;
 import haxe.ui.events.UIEvent;
 import haxe.ui.containers.dialogs.Dialogs;
 import helpers.Util;
+import tink.core.Promise;
 using StringTools;
 
 @:build(haxe.ui.ComponentBuilder.build("assets/main-view.xml"))
-class MainView extends VBox {
+@:await class MainView extends VBox {
 	public static var instance:MainView = null;
 	private var requiresUpdate = false;
+	private var inProgress = false;
 	public function new() {
 		super();
 		instance = this;

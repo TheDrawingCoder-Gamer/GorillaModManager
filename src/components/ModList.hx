@@ -62,6 +62,7 @@ class ModList extends haxe.ui.containers.ScrollView {
         
     }
     public function updateMods() {
+        trace("update");
         var modItems = this.modItems();
         for (modItem in modItems) {
             modItem.modEnabled.disabled = false;

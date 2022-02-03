@@ -21,9 +21,9 @@ class ElectronApp {
         });
         window.loadFile('index.html');
         //window.maximize();
-        #if DEBUG
+
         window.webContents.openDevTools();
-        #end
+
         window.show();
         window.focus();
         window.focusOnWebView();
