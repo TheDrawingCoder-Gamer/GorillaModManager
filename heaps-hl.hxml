@@ -5,7 +5,7 @@
 -lib hlsdl
 -lib haxeui-core
 -lib haxeui-heaps
--lib haxeui-hashlink-filedialogs
+-lib haxeui-native-filedialogs
 libs.hxml 
 
 -D resourcesPath=assets
