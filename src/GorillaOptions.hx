@@ -25,9 +25,7 @@ class GorillaOptions {
         updatedCache = true;
     }
     private static function flush() {
-        // Flushing the save data shouldn't be make or break
-        // So use an async worker thread to save
-        asys.io.File.saveContent(Path.join([GorillaPath.assetsPath, "options.json"]), haxe.Json.stringify(cache));
+        sys.io.File.saveContent(Path.join([GorillaPath.assetsPath, "options.json"]), haxe.Json.stringify(cache));
     }
 
     public static function get_enableBetas() {

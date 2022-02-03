@@ -1,3 +1,7 @@
+.tabview, .modlist {
+    background-color: #ffebcd;
+}
+
 .moditem {
     color: black;
 }

@@ -20,7 +20,7 @@ enum Unzipper {
     UZHaxe;
     UZUnknown;
 }
-@await class Util {
+class Util {
     public static var fetcher:FileFetcher = FFUnknown;
     public static var unzipper:Unzipper = UZUnknown;
     public static function openURL(url:String) {

@@ -22,7 +22,7 @@ class Main {
         #else
             GorillaPath.gorillaPath = Path.join([Sys.getEnv("HOME"), "/.local/share/Steam/steamapps/common/Gorilla Tag/"]);
         #end
-        #if sys
+        #if haxeui_hxwidgets
         Toolkit.theme = "bulby";
         #else
         Toolkit.theme = "bulbyelectron";

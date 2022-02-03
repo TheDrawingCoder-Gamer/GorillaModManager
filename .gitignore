@@ -1,6 +1,7 @@
-build/hxwidgets
-build/electron/app.js
-build/electron/Main.js
+build/
+!build/electron/index.html
+!build/electron/package.json
+!build/electron/package-lock.json
 .vscode
 node_modules
 out

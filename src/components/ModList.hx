@@ -6,7 +6,7 @@ using StringTools;
 using Lambda;
 @:keep
 @:build(haxe.ui.ComponentBuilder.build("assets/mod-list.xml"))
-@await class ModList extends haxe.ui.containers.ScrollView {
+class ModList extends haxe.ui.containers.ScrollView {
     public var selectedItem:ModItem = null;
     public function new() {
         super();
@@ -46,38 +46,46 @@ using Lambda;
     public function mods() {
         return [for (modItem in modItems()) modItem.mod];
     }
-    @await public function refreshModInfo() {
+    public function refreshModInfo() {
+
         this.groups.removeAllComponents(true);
-        var mods:Array<ModData> = @await XmlDeserializer.deserialize();
-        for (mod in mods) {
-            this.addMod(mod);
-        }
+        XmlDeserializer.deserialize().handle((data) -> {
+            switch (data) {
+                case Success(mods): 
+                    for (mod in mods) {
+                        this.addMod(mod);
+                    }
+                case Failure(e): 
+                    throw e;
+            }
+        });
+        
     }
     public function updateMods() {
         var modItems = this.modItems();
         for (modItem in modItems) {
-            modItem.enabled.disabled = false;
+            modItem.modEnabled.disabled = false;
         }
         __updateMods(modItems);
     }
     private function __updateMods(modItems:Array<ModItem>) {
         for (modItem in modItems) {
-            if (modItem.enabled.selected) {
+            if (modItem.modEnabled.selected) {
                 if (modItem.mod.dependencies != null && modItem.mod.dependencies.length != 0) {
                     for (depend in modItem.mod.dependencies) {
                         var dependency = modItems.find((item) -> item.mod.name == depend);
                         if (dependency == null)
                             // crashes otherwise lol
                             continue;
-                        if (!dependency.enabled.selected) {
-                            dependency.enabled.selected = true;
-                            dependency.enabled.disabled = true;
+                        if (!dependency.modEnabled.selected) {
+                            dependency.modEnabled.selected = true;
+                            dependency.modEnabled.disabled = true;
                             __updateMods(modItems);
                             // Stop this cycle and redo everything
                             break;
                         }
-                        if (!dependency.enabled.disabled) {
-                            dependency.enabled.disabled = true;
+                        if (!dependency.modEnabled.disabled) {
+                            dependency.modEnabled.disabled = true;
                         }
                         
                     }

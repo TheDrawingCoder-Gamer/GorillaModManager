@@ -7,11 +7,11 @@ class ModItem extends haxe.ui.containers.HBox {
     public var mod(default, null):ModData;
     public function new(modData:ModData) {
         super();
-        this.name.text = modData.name;
-        this.version.text = modData.version;
-        this.author.text = modData.author;
+        this.modName.text = modData.name;
+        this.modVersion.text = modData.version;
+        this.modAuthor.text = modData.author;
         this.mod = modData;
-        this.enabled.onChange = (_) -> MainView.instance.modlist.updateMods();
+        this.modEnabled.onChange = (_) -> MainView.instance.modlist.updateMods();
     }
     @:bind(this, MouseEvent.DBL_CLICK)
     private function doShowSource(me:MouseEvent) {

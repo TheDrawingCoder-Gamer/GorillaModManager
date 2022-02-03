@@ -1,4 +1,2 @@
 -lib tink_core
 -lib tink_await
--lib asys
--lib tink_runloop
