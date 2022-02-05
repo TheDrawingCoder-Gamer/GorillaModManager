@@ -73,12 +73,12 @@ jobs:
         shell: powershell
         run: |
           haxelib run openfl build windows
-          Copy-Item -Path "assets" -Destination "build/openfl/windows/assets" -Recurse
+          Copy-Item -Path "assets" -Destination "build/openfl/windows/bin/assets/" -Recurse
       - name: Publish Electron App
         uses: actions/upload-artifact@v2
         with: 
           name: windowsOpenfl
-          path: 'build/openfl/windows/'
+          path: 'build/openfl/windows/bin'
 
 
 
