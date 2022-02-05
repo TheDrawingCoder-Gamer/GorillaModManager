@@ -41,6 +41,10 @@ jobs:
            haxelib install tink_await
            haxelib install asys
            haxelib install tink_runloop
+           haxelib install lime
+           haxelib install openfl
+           haxelib install actuate
+           haxelib git haxeui-openfl https://github.com/haxeui/haxeui-openfl.git
       - name: Install wxWidgets
         run: |
           C:\msys64\usr\bin\wget.exe https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
@@ -65,21 +69,16 @@ jobs:
         with: 
           name: windowsBuild
           path: 'build/hxwidgets/'
-      - name: Build Electron
+      - name: Build OpenFL
         shell: powershell
         run: |
-          haxe electron.hxml
-        
-          cd build/electron
-          npm i --production=false
-          npx electron-packager . GorillaModManager --out=out --asar --arch=x64
-          cd ../..
-          Copy-Item -Path "assets" -Destination "build/electron/out/GorillaModManager-win32-x64/assets" -Recurse
+          haxelib run openfl build windows
+          Copy-Item -Path "assets" -Destination "build/openfl/windows/assets" -Recurse
       - name: Publish Electron App
         uses: actions/upload-artifact@v2
         with: 
-          name: windowsElectron
-          path: 'build/electron/out/GorillaModManager-win32-x64'
+          name: windowsOpenfl
+          path: 'build/openfl/windows/'
 
 
 
