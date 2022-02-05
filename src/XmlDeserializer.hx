@@ -48,7 +48,7 @@ typedef Group = {
                             var goodMods = mods.filter((it) -> it.group == group.name);
                             mods = mods.filter((it) -> it.group != group.name);
                             // stable sort because sanity
-                            ArraySort.sort(goodMods, (x, y) -> x.name.charCodeAt(0) - y.name.charCodeAt(0));
+                            ArraySort.sort(goodMods, (x, y) -> x.name == y.name ? 0 : (x.name > y.name ? 1 : -1));
                             groupsData.push({name: group.name, mods: goodMods});
                         }
                         groupsData.push({name: "GMM::Unknown", mods: mods});

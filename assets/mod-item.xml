@@ -1,7 +1,7 @@
 <hbox width="100%" styleNames="moditem" paddingLeft="15">
     <checkbox id="modEnabled"/>
     <label id="modName" />
-    <label id="modVersion" />
+    <label id="modVersion" styleNames="version"/>
     <spacer width="100%"/>
     <label id="modAuthor" />
 </hbox>

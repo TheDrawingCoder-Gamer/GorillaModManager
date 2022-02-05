@@ -72,7 +72,13 @@ using StringTools;
 		if (!success)
 			return;
 		trace("accepted!");
-		Util.deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"]));
+		Util.deleteDirRecursively(Path.join([GorillaPath.gorillaPath, "BepInEx"])); 
+		if (FileSystem.exists(Path.join([GorillaPath.gorillaPath, "GMM-Version.json"]))) {
+			FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, "GMM-Version.json"]));
+		}
+		if (FileSystem.exists(Path.join([GorillaPath.gorillaPath, "GMMv2-Version.json"]))) {
+			FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, "GMMv2-Version.json"]));
+		}
 	}
 	#if !haxeui_hxwidgets
 	@:bind(darkMode, UIEvent.CHANGE)

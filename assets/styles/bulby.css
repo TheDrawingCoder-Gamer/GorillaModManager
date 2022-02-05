@@ -14,3 +14,17 @@ moditem.selected {
     color: platform-color('highlight-text');
 }
 
+.version {
+    border-radius: 20px;
+
+}
+
+.version.outdated {
+    background-color: #ffff00;
+    color: black;
+}
+
+.version.updated {
+    background-color: #00ff00;
+    color: black;
+}
