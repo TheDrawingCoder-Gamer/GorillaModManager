@@ -1,16 +1,43 @@
-.mainview {
-    background-color: #fff3e1;
+.vbox,
+.tabview {
+  background-color: #ffebcc;
+  color: rgb(0, 0, 0);
 }
-
-.tabview, .modlist {
-    background-color: #ffebcd;
+.textfield:disabled {
+  background-color: #a79376;
+  color: #c4c4c4;
 }
-
-.moditem {
-    color: black;
+.label,
+.checkbox,
+.button {
+  color: rgb(0, 0, 0);
 }
-
+.button {
+  background-color: #ffeac4;
+}
+.tabview > .tabview-content {
+  border: 1px solid #666666;
+  padding: 5px;
+  background-color: #ffebcc;
+  color: rgb(0, 0, 0);
+}
 .moditem.selected {
-    background-color: rgb(159, 217, 253);
+  background-color: #65c4ff;
+  color: rgb(0, 0, 0);
+}
+
+.version {
+    border-radius: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.version.outdated {
+    background-color: #888800;
+    color: white;
+}
+
+.version.updated {
+    background-color: #00881d;
     color: white;
 }

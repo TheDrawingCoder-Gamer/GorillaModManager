@@ -17,27 +17,28 @@ typedef ModInstallInfo = {
 }
 class Installer {
 
-    public static function doInstallMods(mods:Array<ModData>) {
-		Promise.inSequence([for (mod in mods) doInstallMod(mod)]).handle((d) -> {
-			switch (d) {
-				case Success(data): 
-					var infos:Array<ModInfo> = [];
-					for (modInfo in data) {
-						if (!modInfo.success) {
-							trace("Failed to install mod: "+ modInfo.mod.name);
-						} else {
-							var info:ModInfo = {version: modInfo.mod.version, structure: modInfo.structure, name: modInfo.mod.name};
-							infos.push(info);
+    public static function doInstallMods(mods:Array<ModData>):Promise<Noise> {
+		return Future.irreversible((cb) -> {
+			Promise.inSequence([for (mod in mods) doInstallMod(mod)]).handle((d) -> {
+				switch (d) {
+					case Success(data): 
+						var infos:Array<ModInfo> = [];
+						for (modInfo in data) {
+							if (!modInfo.success) {
+								trace("Failed to install mod: "+ modInfo.mod.name);
+							} else {
+								var info:ModInfo = {version: modInfo.mod.version, structure: modInfo.structure, name: modInfo.mod.name};
+								infos.push(info);
+							}
 						}
-					}
-					VersionSaver.serialize(infos);
-				case Failure(error): 
-					trace(error);
-			}
+						VersionSaver.serialize(infos);
+						cb(Success(Noise));
+					case Failure(error): 
+						cb(Failure(error));
+				}
+			});
 		});
-		// bad code, fix this
-		MainView.instance.modlist.updateMods();
-        
+		
     }
 	public static function deleteMod(mod:ModData):Bool {
 		var entries = VersionSaver.entries(mod.name);

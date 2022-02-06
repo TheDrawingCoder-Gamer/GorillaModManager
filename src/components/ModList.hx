@@ -62,6 +62,11 @@ class ModList extends haxe.ui.containers.ScrollView {
         });
         
     }
+    public function clearSelections() {
+        for (modItem in modItems()) {
+            modItem.modEnabled.selected = false;
+        }
+    } 
     public function updateMods() {
         trace("update");
         var modItems = this.modItems();
@@ -80,14 +85,21 @@ class ModList extends haxe.ui.containers.ScrollView {
                         if (dependency == null)
                             // crashes otherwise lol
                             continue;
+                        var isLatest = VersionSaver.isLatestVersion(dependency.mod);
+                        // don't do anything if it has no dependencies
+                        if (isLatest && (dependency.mod.dependencies == null || dependency.mod.dependencies.length == 0)) 
+                            continue;
                         if (!dependency.modEnabled.selected) {
                             dependency.modEnabled.selected = true;
-                            dependency.modEnabled.disabled = true;
+                            if (!isLatest)
+                                dependency.modEnabled.disabled = true;
                             __updateMods(modItems);
+                            if (isLatest)
+                                dependency.modEnabled.selected = false;
                             // Stop this cycle and redo everything
                             break;
                         }
-                        if (!dependency.modEnabled.disabled) {
+                        if (!isLatest && !dependency.modEnabled.disabled) {
                             dependency.modEnabled.disabled = true;
                         }
                         
@@ -97,4 +109,5 @@ class ModList extends haxe.ui.containers.ScrollView {
             
         }
     }
+
 }

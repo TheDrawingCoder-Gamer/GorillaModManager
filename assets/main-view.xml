@@ -4,11 +4,12 @@
         <vbox text="Mods" width="100%" height="100%">
             <modlist id="modlist"></modlist>  
             <hbox width="100%"> 
-                <button text="Install/Update" id="installMods"/>
+                <button text="Install" id="installMods"/>
                 <button text="Delete Selected Mods" id="deleteSelectedMods"/>
-                <button text="Mod Info" id="modinfo" disabled="true"/>
+                <button text="About" id="modinfo" disabled="true"/>
                 <spacer width="100%"/>
-                <checkbox id="overwrite" text="Overwrite up to date mods"/>
+                <checkbox id="ignoreDeps" text="Ignore Dependencies"/>
+                <checkbox id="overwrite" text="Force Reinstall"/>
             </hbox>  
         </vbox>
         <vbox text="Utilities" width="100%" height="100%">

@@ -29,3 +29,20 @@
 .danger {
   color: red;
 }
+
+.version {
+  border-radius: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.version.outdated {
+  background-color: #ffff13;
+  color: rgb(0, 0, 0);
+}
+
+.version.updated {
+  background-color: #00ff37;
+  color: rgb(0, 0, 0);
+}
+

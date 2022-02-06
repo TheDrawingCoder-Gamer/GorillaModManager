@@ -44,7 +44,15 @@ using StringTools;
 	}
 	@:bind(installMods, MouseEvent.CLICK)
 	public function doInstallMods(e:MouseEvent) {
-		Installer.doInstallMods(this.modlist.modItems().filter(it -> it.modEnabled.selected).map(it -> it.mod));
+		Installer.doInstallMods(this.modlist.modItems().filter(it -> it.modEnabled.selected).filter(it -> if (this.overwrite.selected) true else !VersionSaver.isLatestVersion(it.mod) ).map(it -> it.mod)).handle((d) -> {
+			switch (d) {
+				case Success(_): 
+					this.modlist.updateMods();
+					this.modlist.clearSelections();
+				case Failure(e): 
+					trace(e);
+			}
+		});
 		
 	}
 	@:bind(deleteSelectedMods, MouseEvent.CLICK)
