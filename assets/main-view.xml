@@ -5,6 +5,7 @@
             <modlist id="modlist"></modlist>  
             <hbox width="100%"> 
                 <button text="Install/Update" id="installMods"/>
+                <button text="Delete Selected Mods" id="deleteSelectedMods"/>
                 <button text="Mod Info" id="modinfo" disabled="true"/>
                 <spacer width="100%"/>
                 <checkbox id="overwrite" text="Overwrite up to date mods"/>

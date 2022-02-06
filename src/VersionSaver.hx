@@ -43,6 +43,14 @@ class VersionSaver {
             return false;
         return true;
     }
+    public static function modStatus(mod:ModData):UpdateStatus {
+        var name = ModDataTools.fullyMangle(mod.name);
+        if (!Reflect.hasField(mods, name))
+            return NotInstalled;
+        if (Reflect.field(mods, name).version != mod.version)
+            return Outdated;
+        return LatestVersion;
+    }
     public static function entries(mod:String):Array<String> {
         var name = ModDataTools.fullyMangle(mod);
         if (!Reflect.hasField(mods, name))

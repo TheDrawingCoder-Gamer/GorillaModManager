@@ -55,6 +55,7 @@ class ModList extends haxe.ui.containers.ScrollView {
                     for (mod in mods) {
                         this.addMod(mod);
                     }
+                    this.updateMods();
                 case Failure(e): 
                     throw e;
             }
@@ -71,6 +72,7 @@ class ModList extends haxe.ui.containers.ScrollView {
     }
     private function __updateMods(modItems:Array<ModItem>) {
         for (modItem in modItems) {
+            modItem.updateRecency(VersionSaver.modStatus(modItem.mod));
             if (modItem.modEnabled.selected) {
                 if (modItem.mod.dependencies != null && modItem.mod.dependencies.length != 0) {
                     for (depend in modItem.mod.dependencies) {

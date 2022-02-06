@@ -20,11 +20,10 @@ moditem.selected {
 }
 
 .version.outdated {
-    background-color: #ffff00;
-    color: black;
+    color: #e7e736;
+
 }
 
 .version.updated {
-    background-color: #00ff00;
-    color: black;
+    color: #6fe279;
 }

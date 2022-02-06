@@ -47,6 +47,28 @@ using StringTools;
 		Installer.doInstallMods(this.modlist.modItems().filter(it -> it.modEnabled.selected).map(it -> it.mod));
 		
 	}
+	@:bind(deleteSelectedMods, MouseEvent.CLICK)
+	public function doDeleteMods(e:MouseEvent) {
+		var dialog = new components.WarningDialog("This will delete selected mods, \nbut will keep any configuration generated. \n\n Is this okay?");
+		var success = false;
+		dialog.onDialogClosed = (b:DialogEvent) -> {
+			if (b.button == DialogButton.OK) {
+				success = true;
+			}
+		};
+		dialog.showDialog();
+		trace("closed?");
+		if (!success)
+			return;
+		trace("success! deleting mods...");
+		var mods:Array<ModData> = this.modlist.modItems().filter(it -> it.modEnabled.selected).map(it -> it.mod);
+		for (mod in mods) {
+			if (VersionSaver.modStatus(mod) != NotInstalled) {
+				Installer.deleteMod(mod);
+			}
+		}
+		this.modlist.updateMods();
+	}
 	
 	@:bind(monkePathDialog.monkePath, UIEvent.CHANGE)
 	private function updatePath(_:UIEvent) {

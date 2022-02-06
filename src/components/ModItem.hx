@@ -21,4 +21,16 @@ class ModItem extends haxe.ui.containers.HBox {
         helpers.Util.openURL('https://github.com/${mod.git_path}');
 
     }
+    public function updateRecency(status:UpdateStatus) {
+        this.modVersion.removeClass("outdated");
+        this.modVersion.removeClass("updated");
+        switch (status) {
+            case NotInstalled: 
+
+            case LatestVersion: 
+                this.modVersion.addClass("updated");
+            case Outdated: 
+                this.modVersion.addClass("outdated");
+        }
+    }
 }

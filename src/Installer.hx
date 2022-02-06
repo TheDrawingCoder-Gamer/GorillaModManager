@@ -35,22 +35,31 @@ class Installer {
 					trace(error);
 			}
 		});
+		// bad code, fix this
+		MainView.instance.modlist.updateMods();
         
     }
-	public static function deleteMod(modName:String):Bool {
-		var entries = VersionSaver.entries(modName);
+	public static function deleteMod(mod:ModData):Bool {
+		var entries = VersionSaver.entries(mod.name);
 		if (entries == null) 
 			return false;
 		// if I do it backwards then it's more likely to be in correct order
 		entries.reverse();
 		// Don't delete directorys that have files as we are only deleting the zip file
-		for (entry in entries) {
+		VersionSaver.removeMod(mod);
+		for (bentry in entries) {
+			var entry = Path.join([GorillaPath.gorillaPath, bentry]);
 			if (FileSystem.isDirectory(entry)) {
 				if (FileSystem.readDirectory(entry).length == 0) {
 					FileSystem.deleteDirectory(entry);
 				}
 			} else {
-				FileSystem.deleteFile(entry);
+				try {
+					FileSystem.deleteFile(entry);
+				} catch (e) {
+					trace(e);
+				}
+				
 			}
 		} 
 		return true;
@@ -58,6 +67,9 @@ class Installer {
 	}
     private static function doInstallMod(mod:ModData):Promise<ModInstallInfo> {
 		return Future.irreversible((cb:Outcome<ModInstallInfo, Error> -> Void) -> {
+			if (VersionSaver.modStatus(mod) != NotInstalled) {
+				deleteMod(mod);
+			}
 			if (mod.download_url.startsWith("internal-runner:")) {
 				var runner = mod.download_url.substr(16);
 				switch (runner) {
@@ -142,7 +154,7 @@ class Installer {
 						download(mod.download_url, Path.join([GorillaPath.gorillaPath, mod.install_location])).handle(d -> {
 							switch (d) {
 								case Success(data): 
-									cb(Success({success: true, structure: [Path.join([GorillaPath.gorillaPath])], mod: mod}));
+									cb(Success({success: true, structure: [Path.join([mod.install_location, mod.download_url.withoutDirectory()])], mod: mod}));
 								case Failure(error): 
 									cb(Failure(error));
 							}
@@ -162,7 +174,7 @@ class Installer {
 				switch (d) {
 					case Success(data):
 						Util.unzipFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
-						var fileData = getEntries(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]), Path.join([GorillaPath.gorillaPath, install_location]));
+						var fileData = getEntries(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]), install_location);
 						FileSystem.deleteFile(Path.join([GorillaPath.gorillaPath, install_location, url.withoutDirectory()]));
 						cb(Success(fileData));
 					case Failure(failure):
