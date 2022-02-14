@@ -36,6 +36,7 @@ using StringTools;
 	
 			}
 		};
+		modinfo.disabled = true;
 		#if !haxeui_hxwidgets
 		darkMode.selected = GorillaOptions.darkMode;
 		updateTheme();
@@ -44,7 +45,7 @@ using StringTools;
 	}
 	@:bind(installMods, MouseEvent.CLICK)
 	public function doInstallMods(e:MouseEvent) {
-		Installer.doInstallMods(this.modlist.modItems().filter(it -> it.modEnabled.selected).filter(it -> if (this.overwrite.selected) true else !VersionSaver.isLatestVersion(it.mod) ).map(it -> it.mod)).handle((d) -> {
+		Installer.doInstallMods(this.modlist.modItems().filter(it -> it.modEnabled.selected).filter(it -> if (this.overwrite.selected) true else (VersionSaver.modStatus(it.mod) != LatestVersion)).map(it -> it.mod)).handle((d) -> {
 			switch (d) {
 				case Success(_): 
 					this.modlist.updateMods();
@@ -84,8 +85,9 @@ using StringTools;
 	}
 	@:bind(modinfo, MouseEvent.CLICK)
 	private function showModInfo(_:MouseEvent) {
-		if (modlist.selectedItem != null && modlist.selectedItem.mod.git_path != null) {
-			helpers.Util.openURL('https://github.com/${modlist.selectedItem.mod.git_path}');
+		trace(modlist.selectedItem);
+		if (modlist.selectedItem != null) {
+			modlist.selectedItem.showSource();
 		}
 	}
 	@:bind(deleteMods, MouseEvent.CLICK) 

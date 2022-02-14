@@ -6,7 +6,7 @@
             <hbox width="100%"> 
                 <button text="Install" id="installMods"/>
                 <button text="Delete Selected Mods" id="deleteSelectedMods"/>
-                <button text="About" id="modinfo" disabled="true"/>
+                <button text="About" id="modinfo"/>
                 <spacer width="100%"/>
                 <checkbox id="ignoreDeps" text="Ignore Dependencies"/>
                 <checkbox id="overwrite" text="Force Reinstall"/>

@@ -15,11 +15,15 @@ class ModItem extends haxe.ui.containers.HBox {
     }
     @:bind(this, MouseEvent.DBL_CLICK)
     private function doShowSource(me:MouseEvent) {
+        
+        me.bubble = false;
+        showSource();
+
+    }
+    public function showSource() {
         if (mod.git_path == null)
             return;
-        me.bubble = false;
         helpers.Util.openURL('https://github.com/${mod.git_path}');
-
     }
     public function updateRecency(status:UpdateStatus) {
         this.modVersion.removeClass("outdated");

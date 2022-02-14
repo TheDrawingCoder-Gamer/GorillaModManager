@@ -63,6 +63,7 @@ class Installer {
 				
 			}
 		} 
+		VersionSaver.flush();
 		return true;
 
 	}
