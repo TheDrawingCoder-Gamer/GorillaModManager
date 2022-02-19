@@ -11,5 +11,13 @@
     </url>
     
     <!-- Windows should NOT have linux bepinex -->
-    <asset name="bepinex-linux.json" unless="windows"/>
+    <asset name="bepinex-linux.json" unless='windows'/>
+    <!-- if= and unless= now support more advanced args. -->
+    <!-- 
+    At the moment, windows, linux, and mac are 
+    defined for respective platforms, and compile time defines
+    also exist. 
+    Any invalid condition is ignored
+    
+    -->
 </xml>
