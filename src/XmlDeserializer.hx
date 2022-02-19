@@ -1,5 +1,7 @@
 package;
 
+import haxe.macro.Context;
+import interp.*;
 import haxe.ds.ArraySort;
 import tink.core.Error;
 import tink.core.Future;
@@ -13,6 +15,7 @@ using Lambda;
 enum NodeData {
     Mods(mods:Array<ModData>);
     Groups(groups:Array<Group>);
+    Section(data:Array<NodeData>);
     NDNone;
 }
 typedef Group = {
@@ -26,21 +29,29 @@ typedef Group = {
             var xml:Xml = Xml.parse(file);
             var mods:Array<ModData> = [];
             var groups:Array<Group> = [];
+            // anonymous functions can't recurse?
+            var addData = function addData (daData:NodeData) { 
+                switch (daData) {
+                    case Mods(nodeMods):
+                        for (mod in nodeMods) {
+                            // Overwrite
+                            mods = mods.filter((it) -> it.name != mod.name);
+                        }
+                        mods = mods.concat(nodeMods);
+                    case Groups(nodeGroups):
+                        groups = groups.concat(nodeGroups);
+                    case Section(data):
+                        for (nodeData in data) {
+                            addData(nodeData);
+                        }
+                    case NDNone:
+                }
+            }
             var data = Promise.inSequence([for (element in xml.firstElement().elements()) processNode(element)]).handle((d) -> {
                 switch (d) {
                     case Success(data):
                         for (nodedata in data) {
-                            switch (nodedata) {
-                                case Mods(nodeMods):
-                                    for (mod in nodeMods) {
-                                        // Overwrite
-                                        mods = mods.filter((it) -> it.name != mod.name);
-                                    }
-                                    mods = mods.concat(nodeMods);
-                                case Groups(nodeGroups):
-                                    groups = groups.concat(nodeGroups);
-                                case NDNone:
-                            }
+                            addData(nodedata);
                         }
                         groups.sort((x, y) -> x.rank - y.rank);
                         var groupsData:Array<{name:String, mods:Array<ModData>}> = [];
@@ -65,41 +76,60 @@ typedef Group = {
         
     }
     private static function isApplicable(element:Xml) {
+       
         if (element.get("unless") != null) {
-            switch (element.get("unless")) {
-                case "windows": 
-                    #if windows
-                        return false;
-                    #end
-                case "mac": 
-                    #if mac 
-                        return false;
-                    #end
-                case "linux": 
-                    #if linux
-                        return false;
-                    #end
+            try {
+                var expr = new IfParser(element.get("unless")).parse();
+                var eval = new Evaluator(expr);
+                for (define => value in Defines.getDefines()) {
+                    eval.defines.set(define, value);
+                }
+                #if windows 
+                    eval.defines.set("platform", "windows");
+                    eval.defines.set("windows", "1");
+                #elseif mac
+                    eval.defines.set("platform", "mac");
+                    eval.defines.set("mac", "1");
+                #elseif linux
+                    eval.defines.set("platform", "linux");
+                    eval.defines.set("linux", "1");
+                #end
+                var result =  Evaluator.isTruthy(eval.evaluate());
+                if (result)
+                    return false;
+            } catch (e) {
+                trace(e);
             }
         }
         if (element.get("if") != null) {
-            switch (element.get("if")) {
-                case "windows": 
-                    #if windows
-                        return false;
-                    #end
-                case "mac": 
-                    #if mac 
-                        return false;
-                    #end
-                case "linux": 
-                    #if linux
-                        return false;
-                    #end
+            try {
+                var expr = new IfParser(element.get("if")).parse();
+                var eval = new Evaluator(expr);
+                for (define => value in Defines.getDefines()) {
+                    eval.defines.set(define, value);
+                }
+                #if windows 
+                    eval.defines.set("platform", "windows");
+                    eval.defines.set("windows", "1");
+                #elseif mac
+                    eval.defines.set("platform", "mac");
+                    eval.defines.set("mac", "1");
+                #elseif linux
+                    eval.defines.set("platform", "linux");
+                    eval.defines.set("linux", "1");
+                #end
+                var result =  Evaluator.isTruthy(eval.evaluate());
+                if (!result)
+                    return false;
+            } catch (e) {
+                trace(e);
             }
         }
         return true;
     }
     @:async private static function processNode(node:Xml):NodeData {
+        if (!isApplicable(node))
+            return NDNone;
         switch (node.nodeName) {
             case "url": 
                 var data:String = @:await Util.requestUrl(node.get("name"));
@@ -131,6 +161,12 @@ typedef Group = {
             case "groupasset": 
                 var groups:Array<Group> = haxe.Json.parse(File.getContent(Path.join([GorillaPath.assetsPath, node.get("name")])));
                 return Groups(groups);
+            case "section": 
+                var godArr = [];
+                for (children in node.elements()) {
+                    godArr.push(@:await processNode(children));
+                }
+                return Section(godArr);
             default: 
                 return NDNone;
         }
