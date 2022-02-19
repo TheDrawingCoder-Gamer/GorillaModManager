@@ -5,10 +5,7 @@
     <!-- Load mine before so that it gets overriden by the "offical" one -->
     <url name="https://raw.githubusercontent.com/TheDrawingCoder-Gamer/GorillaModInfo/main/modinfo.json"/>
     <!-- groupasset also works in the same way as groupurl but with local asset files-->
-    <url name="https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json">
-        <!-- Gorilla Cosmetics doesn't work on latest releases -->
-        <remove name="Gorilla Cosmetics"/>
-    </url>
+    <url name="https://raw.githubusercontent.com/DeadlyKitten/MonkeModInfo/master/modinfo.json"/>
     
     <!-- Windows should NOT have linux bepinex -->
     <asset name="bepinex-linux.json" unless='windows'/>
