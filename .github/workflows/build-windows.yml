@@ -29,6 +29,7 @@ jobs:
           lix scope create
           lix install haxe 4.2.5
           lix use haxe 4.2.5
+          choco install neko
       - name: Install wxWidgets
         run: |
           C:\msys64\usr\bin\wget.exe https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
