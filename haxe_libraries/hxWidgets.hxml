@@ -1,0 +1,7 @@
+# @install: lix --silent download "haxelib:/hxWidgets#1.10.0" into hxWidgets/1.10.0/haxelib
+-lib hxcpp
+-cp ${HAXE_LIBCACHE}/hxWidgets/1.10.0/haxelib/src
+-D hxWidgets=1.10.0
+--macro wx.widgets.EntryMacro.defineWxVersion()
+--macro wx.widgets.EntryMacro.detectPlatform()
+-D NO_PRECOMPILED_HEADERS

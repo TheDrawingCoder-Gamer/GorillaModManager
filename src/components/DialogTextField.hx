@@ -12,7 +12,7 @@ class DialogTextField extends HBox {
     }
     @:bind(openFileDialog, MouseEvent.CLICK)
     public function openDialog(_:MouseEvent) {
-        Dialogs.selectFile((button, files) -> {
+        Dialogs.openFile((button, files) -> {
             switch (button) {
                 case DialogButton.CANCEL: 
                     trace("File Selection Cancelled");

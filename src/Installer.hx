@@ -1,7 +1,5 @@
 package; 
 
-import tink.core.Future;
-import tink.core.Promise;
 import ModData.ModDataTools;
 import sys.FileSystem;
 import helpers.Util;
