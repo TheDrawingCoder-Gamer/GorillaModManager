@@ -32,12 +32,12 @@ jobs:
             lix scope create
             lix install haxe 4.2.5
             lix use haxe 4.2.5
+            brew install neko
 
         - name: Setup App
           env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           run: |
-            brew install neko --HEAD
             wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
             tar xjf wxWidgets-3.1.3.tar.bz2
             cd wxWidgets-3.1.3

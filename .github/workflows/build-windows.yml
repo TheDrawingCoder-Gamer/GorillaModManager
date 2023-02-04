@@ -44,11 +44,11 @@ jobs:
         run: |
           haxe hxwidgets.hxml -D HXCPP_M64
           Copy-Item -Path "assets" -Destination "build/hxwidgets" -Recurse
-          Remove-Item build/hxwidgets/include -Recurse -Force
-          Remove-Item build/hxwidgets/obj -Recurse -Force
-          Remove-Item build/hxwidgets/src -Recurse -Force
-          Remove-Item build/hxwidgets/Build.xml -Force
-          Remove-Item build/hxwidgets/Options.txt -Force
+          Remove-Item build/hxwidgets/include -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item build/hxwidgets/obj -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item build/hxwidgets/src -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item build/hxwidgets/Build.xml -Force -ErrorAction SilentlyContinue
+          Remove-Item build/hxwidgets/Options.txt -Force -ErrorAction SilentlyContinue
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with: 
