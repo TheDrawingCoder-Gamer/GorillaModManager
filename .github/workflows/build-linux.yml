@@ -26,21 +26,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - uses: krdlab/setup-haxe@master
-        with: 
-          haxe-version: 4.2.4
-
-      - name: Install Haxelibs
+      - name: Install Lix
         run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null
-          haxelib git haxeui-core https://github.com/haxeui/haxeui-core.git
-          haxelib git haxeui-hxwidgets https://github.com/haxeui/haxeui-hxwidgets.git
-          haxelib install hxWidgets
-          haxelib install tink_core
-          haxelib install tink_await
-          haxelib install asys
-          haxelib install tink_runloop
+          sudo npm i -g lix
+          lix scope create
+          lix use haxe 4.2.5
+
+
       - name: Setup app
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
