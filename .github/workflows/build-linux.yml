@@ -30,6 +30,7 @@ jobs:
         run: |
           sudo npm i -g lix
           lix scope create
+          lix install haxe 4.2.5
           lix use haxe 4.2.5
 
 

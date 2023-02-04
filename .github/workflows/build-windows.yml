@@ -25,8 +25,9 @@ jobs:
       - uses: egor-tensin/vs-shell@v2
       - name: Install Lix
         run: |
-          sudo npm i -g lix
+          npm i -g lix
           lix scope create
+          lix install haxe 4.2.5
           lix use haxe 4.2.5
       - name: Install wxWidgets
         run: |
